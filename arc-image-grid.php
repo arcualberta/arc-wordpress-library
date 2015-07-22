@@ -21,7 +21,20 @@ function arc_image_grid_add_grid($name, $img_width, $img_height, $max_col_count)
 <div id="<?php echo $id ?>" class="arc-image-grid">
 </div>
 <script>
-    new ArcImageGrid('<?php echo $id ?>', '<?php echo $name ?>', <?php echo $img_width ?>, <?php echo $img_height ?>, <?php echo $max_col_count ?>);
+    var imageList = new Array();
+    for(var i = 0; i < 30; ++i){
+        var r = Math.floor(Math.random() * 255);
+        var g = Math.floor(Math.random() * 128);
+        var b = Math.floor(Math.random() * 100);
+        var bgcolor = r.toString(16) + g.toString(16) + b.toString(16);
+        var color = (255 - r).toString(16) + (255 - g).toString(16) + (255 - b).toString(16);
+        var url = "http://placehold.it/<?php echo $img_width ?>x<?php echo $img_height ?>/" + bgcolor + "/" + color + "?text=image" + (i + 1);
+        
+        var obj = new ArcImageGridImage(url, null);
+        
+        imageList.push(obj);
+    }
+    new ArcImageGrid('<?php echo $id ?>', <?php echo $img_width ?>, <?php echo $img_height ?>, <?php echo $max_col_count ?>, imageList);
 </script>
 <?php
 }

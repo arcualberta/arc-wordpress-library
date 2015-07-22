@@ -1,5 +1,4 @@
 div.arc-image-grid {
-    background-color: blue;
     padding: 0;
     
     perspective: 1000;
@@ -8,8 +7,9 @@ div.arc-image-grid {
 div.arc-image-grid > div.flip {
     margin: 0;
     padding: 0;
+    margin-bottom: -6px;
     
-    transition: 0.9s;
+    transition: 0.8s;
     transform-style: preserve-3d;
     
     position: relative;
@@ -18,11 +18,14 @@ div.arc-image-grid > div.flip {
 
 div.arc-image-grid > div.flip:hover {
     transform: rotateY(180deg);
+    transition: 0.6s;
 }
 
 div.arc-image-grid > div.flip > div {
     margin: 0;
     padding: 0;
+    background-size: contain;
+    background-repeat: no-repeat;
     
     backface-visibility: hidden;
     position: absolute;
@@ -30,16 +33,17 @@ div.arc-image-grid > div.flip > div {
     left: 0;
     bottom: 0;
     right: 0;
+    
+    transition: 0.6s;
 }
 
 div.arc-image-grid > div.flip > .front {
-    background-color: dimgray;
-    
     z-index: 2;
     transform: rotateY(0deg);
 }
 
 div.arc-image-grid > div.flip > .back {
-    background-color: lightgreen;
+    background-color: rgba(0, 0, 0, 0.7);
+    
     transform: rotateY(180deg);
 }
