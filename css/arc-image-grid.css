@@ -7,7 +7,6 @@ div.arc-image-grid {
 div.arc-image-grid > div.flip {
     margin: 0;
     padding: 0;
-    margin-bottom: -6px;
     
     transition: 0.8s;
     transform-style: preserve-3d;
@@ -26,6 +25,7 @@ div.arc-image-grid > div.flip > div {
     padding: 0;
     background-size: contain;
     background-repeat: no-repeat;
+    background-position: center;
     
     backface-visibility: hidden;
     position: absolute;
@@ -43,7 +43,12 @@ div.arc-image-grid > div.flip > .front {
 }
 
 div.arc-image-grid > div.flip > .back {
-    background-color: rgba(0, 0, 0, 0.7);
-    
     transform: rotateY(180deg);
+}
+
+div.arc-image-grid > div.flip > .back > div.content{
+    background-color: rgba(0, 0, 0, 0.5);
+    color: #fff;
+    width: 100%;
+    height: 100%;
 }

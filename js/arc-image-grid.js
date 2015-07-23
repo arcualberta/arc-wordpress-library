@@ -1,21 +1,37 @@
-var ArcImageGridImage = function(url, data){
-    this.imageUrl = url;
+var ArcImageGridImage = function(data){
+    this.imageUrl = data.metadata['_arc_image_grid_img'];
     this.data = data;
 };
 
-var ArcImageGrid = function(id, imageWidth, imageHeight, maxColCount, images){
+var ArcImageGrid = function(id, imageWidth, imageHeight, maxColCount, images, content){
     this.id = id;
     this.imageWidth = imageWidth;
     this.imageHeight = imageHeight;
     this.maxColCount = maxColCount;
     this.page = 0;
     this.images = images;
+    this.content = content;
     
     ArcImageGrid.grids[id] = this;
     
     this.resize();
 };
 ArcImageGrid.grids = {};
+ArcImageGrid.prototype.getContent = function(imageId){
+    var match;
+    var result;
+    var content = this.content;
+    var reg = /{([^}]+)}/g;
+    
+    while(match = reg.exec(content)){
+        result = match[1].replace(/&#8220;|&#8221;|&#8216;|&#8217;/gi, '"');
+        result = eval("this.images[" + imageId + "].data." + result);
+        
+        content = content.replace(match[0], result);
+    }
+    
+    return content;
+};
 ArcImageGrid.prototype.selectPage = function(page){
     this.page = page;
     
@@ -33,6 +49,11 @@ ArcImageGrid.prototype.selectPage = function(page){
             var cDiv = fDiv.childNodes[j];
             image = this.images[page + i];
             cDiv.style.backgroundImage = 'url("' + image.imageUrl + '")';
+            
+            if(cDiv.classList.contains("back")){
+                var contentDiv = cDiv.childNodes[0];
+                contentDiv.innerHTML = this.getContent(page + i);
+            }
         } while(j--);
     };
 };
@@ -58,6 +79,11 @@ ArcImageGrid.prototype.resize = function(){
         
         cDiv = document.createElement('div');
         cDiv.className = 'back';
+        
+        var contentDiv = document.createElement('div');
+        contentDiv.className = 'content';
+        cDiv.appendChild(contentDiv);
+        
         iDiv.appendChild(cDiv);
         
         div.appendChild(iDiv);
