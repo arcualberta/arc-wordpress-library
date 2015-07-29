@@ -8,10 +8,13 @@
 defined('ABSPATH') or die('No script kiddies please!');
 
 class ARCImageGridCell {
+
     public $id = 0;
     public $name = 'MISSINGNO.';
     public $post_type = 'post';
+    public $url = '#';
     public $metadata = array();
+
 }
 
 // Enable the arc image grid javascript and css files.
@@ -23,8 +26,7 @@ function arc_image_grid_scripts() {
 
 add_action('wp_enqueue_scripts', 'arc_image_grid_scripts');
 
-function arc_image_grid_add_grid($name, $img_width, $img_height, $max_col_count, $content) {
-    ob_start();
+function arc_image_grid_add_grid($name, $img_width, $img_height, $max_col_count, $content, $query = false) {
     $id = uniqid("image_grid");
     ?>
     <div id="<?php echo $id ?>" class="arc-image-grid">
@@ -36,17 +38,20 @@ function arc_image_grid_add_grid($name, $img_width, $img_height, $max_col_count,
     <?php
     global $wpdb;
     global $result;
-    $query = "
-        SELECT p.ID AS ID, p.post_title AS post_title, p.post_type AS post_type, pm.meta_key AS meta_key, pm.meta_value AS meta_value
-        FROM $wpdb->posts p, $wpdb->postmeta pm
-        WHERE p.ID IN (SELECT spm.post_id 
-                        FROM $wpdb->postmeta spm 
-                            WHERE spm.post_id = pm.post_id
-                                AND spm.meta_key = '_arc_image_grid_name'
-                                AND spm.meta_value = '" . $name . "')
-            AND p.post_status = 'publish'
-            AND p.post_date < NOW()
-        ORDER BY p.ID, p.post_date DESC";
+
+    if ($query == false) {
+        $query = "
+    SELECT p.ID AS ID, p.post_title AS post_title, p.post_type AS post_type, p.guid AS url, pm.meta_key AS meta_key, pm.meta_value AS meta_value
+    FROM $wpdb->posts p, $wpdb->postmeta pm
+    WHERE p.ID IN (SELECT spm.post_id 
+                    FROM $wpdb->postmeta spm 
+                        WHERE spm.post_id = pm.post_id
+                            AND spm.meta_key = '_arc_image_grid_name'
+                            AND spm.meta_value = '" . $name . "')
+        AND p.post_status = 'publish'
+        AND p.post_date < NOW()
+    ORDER BY p.ID, p.post_date DESC";
+    }
 
     $results = $wpdb->get_results($query, OBJECT);
     $currentId = null;
@@ -62,6 +67,7 @@ function arc_image_grid_add_grid($name, $img_width, $img_height, $max_col_count,
             $currentObj->id = $result->ID;
             $currentObj->name = $result->post_title;
             $currentObj->post_type = $result->post_type;
+            $currentObj->url = $result->url;
             $currentId = $result->ID;
         }
 
@@ -77,9 +83,6 @@ function arc_image_grid_add_grid($name, $img_width, $img_height, $max_col_count,
         init<?php echo $id ?>();
     </script>
     <?php
-    $output = ob_get_contents();
-    ob_end_clean();
-    return $output;
 }
 
 function arc_image_grid_add_grid_short($atts, $content = null) {
@@ -87,10 +90,15 @@ function arc_image_grid_add_grid_short($atts, $content = null) {
         'name' => 'arc_image_grid',
         'img_width' => 100,
         'img_height' => 90,
-        'max_col_count' => 3,
+        'max_col_count' => 3
             ), $atts);
 
-    return arc_image_grid_add_grid($a['name'], $a['img_width'], $a['img_height'], $a['max_col_count'], $content);
+    ob_start();
+    arc_image_grid_add_grid($a['name'], $a['img_width'], $a['img_height'], $a['max_col_count'], $content, false);
+    $output = ob_get_contents();
+    ob_end_clean();
+    
+    return $output;
 }
 
 add_shortcode('arc_add_image_grid', 'arc_image_grid_add_grid_short');

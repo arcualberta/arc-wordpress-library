@@ -27,6 +27,6 @@ Example
 ```
 [arc_add_image_grid name="TEST" img_width=215 img_height=215 max_col_count=2]
 <p style="color: white;">Grid Name: {metadata['_arc_image_grid_name']}
-<a style="color: white;" href="#">Go to {name}</a>
+<a style="color: white;" href="{url}">Go to {name}</a>
 [/arc_add_image_grid]
 ```
