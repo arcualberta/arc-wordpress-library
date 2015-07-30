@@ -16,6 +16,11 @@ To add the image grid to a php page, simply call the function `arc_image_grid_ad
 *$max_col_count*    The maximum number of columns that are displayed on this grid.
 *$content*          HTML content that can appear behind the image on the grid.
 
+Example
+```
+arc_image_grid_add_grid('ALBUM', 215, 215, 2, '<p style="color: white;">Grid Name: {metadata["_arc_image_grid_name"]}<a style="color: white;" href="{url}">Go to {name}</a>');
+```
+
 ## Adding to a Post or Page
 To add an image grid to a post or page call the shortcode function `arc_add_image_grid` with the backside content specified in-line and the following parameters:
 *name*             The name of the grid to use. This name will be defined on a post or page entry.
