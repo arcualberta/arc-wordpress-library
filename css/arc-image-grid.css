@@ -58,3 +58,26 @@ div.arc-image-grid > div.flip > .back > div.content{
     right: 0;
     bottom: 0;
 }
+
+div.arc-grid-container {
+    display: flex;
+}
+
+/* Buttons for the image grid */
+.arc-grid-button {
+    cursor: pointer;
+    height: 100%;
+    font-size: 2.5em;
+    vertical-align: middle;
+    margin-top: auto;
+    margin-bottom: auto;
+    padding: 0px 5px 0px 5px;
+}
+
+.arc-grid-left:before {
+    content: "<";
+}
+
+.arc-grid-right:before {
+    content: ">"
+}
