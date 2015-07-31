@@ -29,11 +29,11 @@ add_action('wp_enqueue_scripts', 'arc_image_grid_scripts');
 function arc_image_grid_add_grid($name, $img_width, $img_height, $max_col_count, $content, $query = false) {
     $id = uniqid("image_grid");
     ?>
-    <div id="<?php echo $id ?>_container" class="arc-grid-container">
+    <div id="<?php echo $id ?>_container" id="<?php echo $id ?>_left" class="arc-grid-container">
         <span class="arc-grid-button arc-grid-left"></span>
         <div id="<?php echo $id ?>" class="arc-image-grid">
         </div>
-        <span class="arc-grid-button arc-grid-right"></span>
+        <span class="arc-grid-button arc-grid-right" id="<?php echo $id ?>_right"></span>
     </div>
     <script>
         function init<?php echo $id ?>() {

@@ -14,6 +14,12 @@ var ArcImageGrid = function(id, imageWidth, imageHeight, maxColCount, images, co
     
     ArcImageGrid.grids[id] = this;
     
+    var button = document.getElementById(this.id + "_left");
+    button.onclick = function() { turnPage(-1); };
+    
+    button = document.getElementById(this.id + "_right");
+    button.onclick = function() { turnPage(1); };
+    
     this.resize();
 };
 ArcImageGrid.grids = {};
@@ -31,6 +37,9 @@ ArcImageGrid.prototype.getContent = function(imageId){
     }
     
     return content;
+};
+ArcImageGrid.prototype.turnPage = function(pageAmount){ // Negative for left and positive for right
+    this.selectPage(this.page + pageAmount);
 };
 ArcImageGrid.prototype.selectPage = function(page){
     this.page = page;
