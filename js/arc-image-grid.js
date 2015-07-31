@@ -1,3 +1,24 @@
+window.requestAnimFrame = (function(){
+    return  window.requestAnimationFrame       ||
+    window.webkitRequestAnimationFrame ||
+    window.mozRequestAnimationFrame    ||
+    function( callback ){
+        window.setTimeout(callback, 1000 / 30);
+    };
+})();
+
+var arcCheckDocumentReady = function(inputFunction){
+    var testReady = function(){
+        if(document.readyState !== 'complete'){
+            requestAnimFrame(testReady);
+        }else{
+            inputFunction();
+        }
+    };
+    
+    testReady();
+};
+
 var ArcImageGridImage = function(data){
     this.imageUrl = data.metadata['_arc_image_grid_img'];
     this.data = data;
@@ -15,10 +36,10 @@ var ArcImageGrid = function(id, imageWidth, imageHeight, maxColCount, images, co
     ArcImageGrid.grids[id] = this;
     
     var button = document.getElementById(this.id + "_left");
-    button.onclick = function() { turnPage(-1); };
+    button.onclick = function() { ArcImageGrid.grids[id].turnPage(-1); };
     
     button = document.getElementById(this.id + "_right");
-    button.onclick = function() { turnPage(1); };
+    button.onclick = function() { ArcImageGrid.grids[id].turnPage(1); };
     
     this.resize();
 };

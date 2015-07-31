@@ -30,7 +30,7 @@ function arc_image_grid_add_grid($name, $img_width, $img_height, $max_col_count,
     $id = uniqid("image_grid");
     ?>
     <div id="<?php echo $id ?>_container" id="<?php echo $id ?>_left" class="arc-grid-container">
-        <span class="arc-grid-button arc-grid-left"></span>
+        <span class="arc-grid-button arc-grid-left" id="<?php echo $id ?>_left"></span>
         <div id="<?php echo $id ?>" class="arc-image-grid">
         </div>
         <span class="arc-grid-button arc-grid-right" id="<?php echo $id ?>_right"></span>
@@ -84,7 +84,7 @@ function arc_image_grid_add_grid($name, $img_width, $img_height, $max_col_count,
     ?>
             new ArcImageGrid('<?php echo $id ?>', <?php echo $img_width ?>, <?php echo $img_height ?>, <?php echo $max_col_count ?>, imageList, <?php echo json_encode($content) ?>);
         }
-        init<?php echo $id ?>();
+        arcCheckDocumentReady(init<?php echo $id ?>);
     </script>
     <?php
 }
