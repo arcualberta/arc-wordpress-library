@@ -72,6 +72,11 @@ div.arc-grid-container {
     margin-top: auto;
     margin-bottom: auto;
     padding: 0px 5px 0px 5px;
+    color: rgba(0, 0, 0, 0.5);
+}
+
+.arc-grid-button:hover {
+    color: rgba(0, 0, 0, 1.0);
 }
 
 .arc-grid-left:before {
