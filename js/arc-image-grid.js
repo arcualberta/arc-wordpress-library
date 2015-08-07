@@ -36,6 +36,7 @@ var ArcImageGrid = function (id, imageWidth, imageHeight, maxColCount, images, c
     this.page = 0;
     this.images = images;
     this.content = content;
+    var _this = this;
 
     ArcImageGrid.grids[id] = this;
 
@@ -50,6 +51,10 @@ var ArcImageGrid = function (id, imageWidth, imageHeight, maxColCount, images, c
         var _this = ArcImageGrid.grids[id];
         _this.turnPage(_this.pagesPerGrid);
     };
+    
+    window.addEventListener('resize', function(){
+        _this.resize();
+    }, true);
 
     this.resize();
 };
@@ -114,13 +119,26 @@ ArcImageGrid.prototype.selectPage = function (page) {
     }
 };
 ArcImageGrid.prototype.resize = function () {
+    var container = document.getElementById(this.id + "_container");
     var div = document.getElementById(this.id);
+    var width = (this.imageWidth * this.maxColCount);
 
-    div.style.width = (this.imageWidth * this.maxColCount) + "px";
-
+    div.style.width = width + "px";
+    var itemsX = this.maxColCount;
+    var currentWidth = div.offsetWidth;
+    
+    if(currentWidth < width){
+        itemsX = ~~(currentWidth / this.imageWidth); // Quick floor
+        
+        if(itemsX < 1){
+            itemsX = 1;
+        }
+        width = itemsX * this.imageWidth;
+        div.style.width = width + "px";
+    }
     div.innerHTML = "";
 
-    var itemsX = this.maxColCount;
+    
     var i = (itemsX * itemsX) - 1;
 
     do {
