@@ -32,7 +32,7 @@ var ArcImageGrid = function (id, imageWidth, imageHeight, maxColCount, images, c
     this.imageWidth = imageWidth;
     this.imageHeight = imageHeight;
     this.maxColCount = maxColCount;
-    this.pagesPerGrid = Math.pow(maxColCount, 2);
+    this.pagesPerGrid = maxColCount * maxColCount;
     this.page = 0;
     this.images = images;
     this.content = content;
@@ -78,12 +78,13 @@ ArcImageGrid.prototype.turnPage = function (pageAmount) { // Negative for left a
     var changeAmount = this.page + pageAmount;
     
     if(changeAmount < 0){
-        return;
+        this.selectPage(0);
     }else if(changeAmount >= this.images.length ){
-        return;
+        var pageVal = this.images.length - this.pagesPerGrid;
+        this.selectPage(pageVal < 0 ? 0 : pageVal);
+    }else{
+        this.selectPage(this.page + pageAmount);
     }
-    
-    this.selectPage(this.page + pageAmount);
 };
 ArcImageGrid.prototype.selectPage = function (page) {
     this.page = page;
@@ -137,9 +138,10 @@ ArcImageGrid.prototype.resize = function () {
         div.style.width = width + "px";
     }
     div.innerHTML = "";
+    this.pagesPerGrid = itemsX * itemsX;
 
     
-    var i = (itemsX * itemsX) - 1;
+    var i = this.pagesPerGrid - 1;
 
     do {
         var iDiv = document.createElement('div');
