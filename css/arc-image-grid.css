@@ -26,6 +26,7 @@ div.arc-image-grid > div.flip > div {
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
+    background-size: cover;
     
     backface-visibility: hidden;
     position: absolute;
