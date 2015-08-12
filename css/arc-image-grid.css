@@ -13,6 +13,8 @@ div.arc-image-grid > div.flip {
     
     position: relative;
     display: inline-block;
+    
+    margin-bottom: -5px;
 }
 
 div.arc-image-grid > div.flip:hover {
