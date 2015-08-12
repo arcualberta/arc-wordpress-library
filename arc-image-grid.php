@@ -26,14 +26,14 @@ function arc_image_grid_scripts() {
 
 add_action('wp_enqueue_scripts', 'arc_image_grid_scripts');
 
-function arc_image_grid_add_grid($name, $img_width, $img_height, $max_col_count, $content, $query = false) {
+function arc_image_grid_add_grid($name, $img_width, $img_height, $max_col_count, $content, $button_text = "Read More", $random = false, $show_arrows = true, $timer_seconds = 15, $limit = 100) {
     $id = uniqid("image_grid");
     ?>
     <div id="<?php echo $id ?>_container" id="<?php echo $id ?>_left" class="arc-grid-container">
-        <span class="arc-grid-button arc-grid-left" id="<?php echo $id ?>_left"></span>
+        <span class="arc-grid-button arc-grid-left" id="<?php echo $id ?>_left" style="<?php if(!$show_arrows){ echo 'display: none;'; } ?>"></span>
         <div id="<?php echo $id ?>" class="arc-image-grid">
         </div>
-        <span class="arc-grid-button arc-grid-right" id="<?php echo $id ?>_right"></span>
+        <span class="arc-grid-button arc-grid-right" id="<?php echo $id ?>_right" style="<?php if(!$show_arrows){ echo 'display: none;'; } ?>"></span>
     </div>
     <script>
         function init<?php echo $id ?>() {
@@ -42,9 +42,8 @@ function arc_image_grid_add_grid($name, $img_width, $img_height, $max_col_count,
     <?php
     global $wpdb;
     global $result;
-
-    if ($query == false) {
-        $query = "
+    
+    $query = "
     SELECT p.ID AS ID, p.post_title AS post_title, p.post_type AS post_type, p.guid AS url, pm.meta_key AS meta_key, pm.meta_value AS meta_value
     FROM $wpdb->posts p, $wpdb->postmeta pm
     WHERE p.ID IN (SELECT spm.post_id 
@@ -53,9 +52,15 @@ function arc_image_grid_add_grid($name, $img_width, $img_height, $max_col_count,
                             AND spm.meta_key = '_arc_image_grid_name'
                             AND spm.meta_value = '" . $name . "')
         AND p.post_status = 'publish'
-        AND p.post_date < NOW()
-    ORDER BY p.ID, p.post_date DESC";
+        AND p.post_date < NOW() ";
+
+    if ($random) {
+        $query .= "ORDER BY " . rand() . " ^ p.ID "; // An exclusive or is used with a rand to keep meta-data grouped together.
+    }else{
+        $query .= "ORDER BY p.ID, p.post_date DESC ";
     }
+    
+    $query .= "LIMIT " . $limit;
 
     $results = $wpdb->get_results($query, OBJECT);
     $currentId = null;
@@ -82,7 +87,8 @@ function arc_image_grid_add_grid($name, $img_width, $img_height, $max_col_count,
         echo 'imageList.push(new ArcImageGridImage(' . json_encode($currentObj) . "));";
     }
     ?>
-            new ArcImageGrid('<?php echo $id ?>', <?php echo $img_width ?>, <?php echo $img_height ?>, <?php echo $max_col_count ?>, imageList, <?php echo json_encode($content) ?>);
+            
+            new ArcImageGrid('<?php echo $id ?>', <?php echo $img_width ?>, <?php echo $img_height ?>, <?php echo $max_col_count ?>, imageList, <?php echo json_encode($content) ?>, <?php echo json_encode($button_text) ?>, <?php echo $timer_seconds?>);
         }
         arcCheckDocumentReady(init<?php echo $id ?>);
     </script>
@@ -94,11 +100,14 @@ function arc_image_grid_add_grid_short($atts, $content = null) {
         'name' => 'arc_image_grid',
         'img_width' => 100,
         'img_height' => 90,
-        'max_col_count' => 3
+        'max_col_count' => 3,
+        'button_name' => 'Read More',
+        'random' => false,
+        'show_arrows' => true
             ), $atts);
 
     ob_start();
-    arc_image_grid_add_grid($a['name'], $a['img_width'], $a['img_height'], $a['max_col_count'], $content, false);
+    arc_image_grid_add_grid($a['name'], $a['img_width'], $a['img_height'], $a['max_col_count'], $content, $a['button_name'], $a['random'], $a['show_arrows'], 15, 100);
     $output = ob_get_contents();
     ob_end_clean();
     

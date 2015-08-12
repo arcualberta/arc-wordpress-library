@@ -27,7 +27,7 @@ var ArcImageGridImage = function (data) {
     this.imageUrl = data.metadata['_arc_image_grid_img'];
     this.data = data;
 };
-var ArcImageGrid = function (id, imageWidth, imageHeight, maxColCount, images, content) {
+var ArcImageGrid = function (id, imageWidth, imageHeight, maxColCount, images, content, buttonText, timer) {
     this.id = id;
     this.imageWidth = imageWidth;
     this.imageHeight = imageHeight;
@@ -36,7 +36,9 @@ var ArcImageGrid = function (id, imageWidth, imageHeight, maxColCount, images, c
     this.page = 0;
     this.images = images;
     this.content = content;
+    this.buttonText = buttonText;
     var _this = this;
+    this.timer = timer > 0 ? timer * 1000 : 0; 
 
     ArcImageGrid.grids[id] = this;
 
@@ -72,7 +74,8 @@ ArcImageGrid.prototype.getContent = function (imageId) {
         content = content.replace(match[0], result);
     }
 
-    return content;
+    result = "<div class='content-main'>" + content + "</div><a class='content-button' href='" + this.images[imageId].data.url + "'>" + this.buttonText + "</a>";
+    return result;
 };
 ArcImageGrid.prototype.turnPage = function (pageAmount) { // Negative for left and positive for right
     var changeAmount = this.page + pageAmount;
