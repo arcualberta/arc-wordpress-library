@@ -38,7 +38,9 @@ var ArcImageGrid = function (id, imageWidth, imageHeight, maxColCount, images, c
     this.content = content;
     this.buttonText = buttonText;
     var _this = this;
-    this.timer = timer > 0 ? timer * 1000 : 0; 
+    this.timeout = timer > 0 ? timer * 1000 : 0;
+    this.timer = null;
+    
 
     ArcImageGrid.grids[id] = this;
 
@@ -80,14 +82,15 @@ ArcImageGrid.prototype.getContent = function (imageId) {
 ArcImageGrid.prototype.turnPage = function (pageAmount) { // Negative for left and positive for right
     var changeAmount = this.page + pageAmount;
     
-    if(changeAmount < 0){
-        this.selectPage(0);
-    }else if(changeAmount >= this.images.length ){
-        var pageVal = this.images.length - this.pagesPerGrid;
-        this.selectPage(pageVal < 0 ? 0 : pageVal);
-    }else{
-        this.selectPage(this.page + pageAmount);
-    }
+    while(changeAmount < 0){
+        changeAmount += this.pagesPerGrid;
+    };
+    
+    if(changeAmount >= this.images.length){
+        changeAmount = changeAmount % this.images.length;
+    };
+    
+    this.selectPage(changeAmount);
 };
 ArcImageGrid.prototype.selectPage = function (page) {
     this.page = page;
@@ -97,10 +100,12 @@ ArcImageGrid.prototype.selectPage = function (page) {
     var i = div.childElementCount - 1;
     var j = 2;
     var image = null;
+    var imageIndex = 0;
 
     for (i = 0; i < div.childElementCount; ++i) {
         var fDiv = children[i];
-        image = this.images[page + i];
+        imageIndex = (page + i) % this.images.length;
+        image = this.images[imageIndex];
 
         if (image && image !== null) {
             fDiv.style.visibility = 'visible';
@@ -109,12 +114,11 @@ ArcImageGrid.prototype.selectPage = function (page) {
                 
                 var cDiv = fDiv.childNodes[j];
 
-
                 cDiv.style.backgroundImage = 'url("' + image.imageUrl + '")';
 
                 if (cDiv.classList.contains("back")) {
                     var contentDiv = cDiv.childNodes[0];
-                    contentDiv.innerHTML = this.getContent(page + i);
+                    contentDiv.innerHTML = this.getContent(imageIndex);
                 }
             } while (j--);
         } else {
@@ -126,6 +130,7 @@ ArcImageGrid.prototype.resize = function () {
     var container = document.getElementById(this.id + "_container");
     var div = document.getElementById(this.id);
     var width = (this.imageWidth * this.maxColCount);
+    var _this = this;
 
     div.style.width = width + "px";
     var itemsX = this.maxColCount;
@@ -142,7 +147,10 @@ ArcImageGrid.prototype.resize = function () {
     }
     div.innerHTML = "";
     this.pagesPerGrid = itemsX * itemsX;
-
+    
+    if(this.timer !== null){
+        clearInterval(this.timer);
+    }
     
     var i = this.pagesPerGrid - 1;
 
@@ -167,6 +175,12 @@ ArcImageGrid.prototype.resize = function () {
 
         div.appendChild(iDiv);
     } while (i--);
-
+    
+    if(this.timeout > 0){
+        this.timer = setInterval(function(){
+            _this.turnPage(_this.pagesPerGrid);
+        }, this.timeout);
+    }
+    
     this.selectPage(this.page);
 };
