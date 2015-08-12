@@ -80,17 +80,17 @@ ArcImageGrid.prototype.getContent = function (imageId) {
     return result;
 };
 ArcImageGrid.prototype.turnPage = function (pageAmount) { // Negative for left and positive for right
-    var changeAmount = this.page + pageAmount;
+    var newPage = this.page + pageAmount;
     
-    while(changeAmount < 0){
-        changeAmount += this.pagesPerGrid;
-    };
+    while(newPage < 0){
+        newPage += this.images.length;
+    }
     
-    if(changeAmount >= this.images.length){
-        changeAmount = changeAmount % this.images.length;
-    };
+    if(newPage >= this.images.length){
+        newPage = newPage % this.images.length;
+    }
     
-    this.selectPage(changeAmount);
+    this.selectPage(newPage);
 };
 ArcImageGrid.prototype.selectPage = function (page) {
     this.page = page;

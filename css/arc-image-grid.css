@@ -8,7 +8,7 @@ div.arc-image-grid > div.flip {
     margin: 0;
     padding: 0;
     
-    transition: 0.8s;
+    transition: 1.0s;
     transform-style: preserve-3d;
     
     position: relative;
