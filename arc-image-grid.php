@@ -101,13 +101,13 @@ function arc_image_grid_add_grid_short($atts, $content = null) {
         'img_width' => 100,
         'img_height' => 90,
         'max_col_count' => 3,
-        'button_name' => 'Read More',
+        'button_text' => 'Read More',
         'random' => false,
         'show_arrows' => true
             ), $atts);
 
     ob_start();
-    arc_image_grid_add_grid($a['name'], $a['img_width'], $a['img_height'], $a['max_col_count'], $content, $a['button_name'], $a['random'], $a['show_arrows'], 15, 100);
+    arc_image_grid_add_grid($a['name'], $a['img_width'], $a['img_height'], $a['max_col_count'], $content, $a['button_text'], $a['random'], $a['show_arrows'], 15, 100);
     $output = ob_get_contents();
     ob_end_clean();
     
