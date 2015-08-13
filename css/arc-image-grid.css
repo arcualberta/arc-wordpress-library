@@ -101,7 +101,8 @@ div.arc-grid-container {
     margin-top: auto;
     margin-bottom: auto;
     padding: 0px 5px 0px 5px;
-    color: rgba(0, 0, 0, 0.5);
+    color: rgba(0, 0, 0, 0.0);
+    transition-duration: 0.5s;
 }
 
 .arc-grid-button:hover {
