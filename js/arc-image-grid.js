@@ -182,5 +182,12 @@ ArcImageGrid.prototype.resize = function () {
         }, this.timeout);
     }
     
+    // Add the arrows back in
+    var element = document.getElementById(this.id + "_left");
+    element.className = element.className.replace(/\binvisible\b/, '');
+    
+    element = document.getElementById(this.id + "_right");
+    element.className = element.className.replace(/\binvisible\b/, '');
+    
     this.selectPage(this.page);
 };
