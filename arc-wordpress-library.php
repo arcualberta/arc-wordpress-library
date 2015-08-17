@@ -7,149 +7,77 @@
  */
 defined('ABSPATH') or die('No script kiddies please!');
 
-class ARCImageGridCell {
+class ARCPostCell {
 
     public $id = 0;
     public $name = 'MISSINGNO.';
     public $post_type = 'post';
     public $url = '#';
     public $metadata = array();
-
 }
 
-// Enable the arc image grid javascript and css files.
-function arc_image_grid_scripts() {
-    wp_enqueue_style('arc-image-grid-style', plugins_url('css/arc-image-grid.css', __FILE__), array());
-
-    wp_enqueue_script('arc-image-grid', plugins_url('js/arc-image-grid.js', __FILE__));
-}
-
-add_action('wp_enqueue_scripts', 'arc_image_grid_scripts');
-
-function arc_image_grid_add_grid($name, $img_width, $img_height, $max_col_count, $content, $button_text = "Read More", $random = false, $show_arrows = true, $timer_seconds = 15, $limit = 100) {
-    $id = uniqid("image_grid");
-    ?>
-    <div id="<?php echo $id ?>_container" id="<?php echo $id ?>_left" class="arc-grid-container">
-        <span class="arc-grid-button arc-grid-left invisible" id="<?php echo $id ?>_left" style="<?php if(!$show_arrows){ echo 'display: none;'; } ?>"></span>
-        <div id="<?php echo $id ?>" class="arc-image-grid">
-        </div>
-        <span class="arc-grid-button arc-grid-right invisible" id="<?php echo $id ?>_right" style="<?php if(!$show_arrows){ echo 'display: none;'; } ?>"></span>
-    </div>
-    <script>
-        function init<?php echo $id ?>() {
-            var imageList = new Array();
-
-    <?php
-    global $wpdb;
-    global $result;
-    
-    $query = "
-    SELECT p.ID AS ID, p.post_title AS post_title, p.post_type AS post_type, p.guid AS url, pm.meta_key AS meta_key, pm.meta_value AS meta_value
-    FROM $wpdb->posts p, $wpdb->postmeta pm
-    WHERE p.ID IN (SELECT spm.post_id 
-                    FROM $wpdb->postmeta spm 
-                        WHERE spm.post_id = pm.post_id
-                            AND spm.meta_key = '_arc_image_grid_name'
-                            AND spm.meta_value = '" . $name . "')
-        AND p.post_status = 'publish'
-        AND p.post_date < NOW() ";
-
-    if ($random) {
-        $query .= "ORDER BY " . rand() . " ^ p.ID "; // An exclusive or is used with a rand to keep meta-data grouped together.
-    }else{
-        $query .= "ORDER BY p.ID, p.post_date DESC ";
-    }
-    
-    $query .= "LIMIT " . $limit;
-
-    $results = $wpdb->get_results($query, OBJECT);
-    $currentId = null;
-    $currentObj = null;
-    foreach ($results as $result) {
-        if ($result->ID != $currentId) {
-
-            if ($currentObj != null) {
-                echo 'imageList.push(new ArcImageGridImage(' . json_encode($currentObj) . "));\n";
-            }
-
-            $currentObj = new ARCImageGridCell;
-            $currentObj->id = $result->ID;
-            $currentObj->name = $result->post_title;
-            $currentObj->post_type = $result->post_type;
-            $currentObj->url = $result->url;
-            $currentId = $result->ID;
-        }
-
-        $currentObj->metadata[$result->meta_key] = $result->meta_value;
-    }
-
-    if ($currentObj != null) {
-        echo 'imageList.push(new ArcImageGridImage(' . json_encode($currentObj) . "));";
-    }
-    ?>
-            
-            new ArcImageGrid('<?php echo $id ?>', <?php echo $img_width ?>, <?php echo $img_height ?>, <?php echo $max_col_count ?>, imageList, <?php echo json_encode($content) ?>, <?php echo json_encode($button_text) ?>, <?php echo $timer_seconds?>);
-        }
-        arcCheckDocumentReady(init<?php echo $id ?>);
-    </script>
-    <?php
-}
-
-function arc_image_grid_add_grid_short($atts, $content = null) {
-    $a = shortcode_atts(array(
-        'name' => 'arc_image_grid',
-        'img_width' => 100,
-        'img_height' => 90,
-        'max_col_count' => 3,
-        'button_text' => 'Read More',
-        'random' => false,
-        'show_arrows' => true
-            ), $atts);
-
-    ob_start();
-    arc_image_grid_add_grid($a['name'], $a['img_width'], $a['img_height'], $a['max_col_count'], $content, $a['button_text'], $a['random'], $a['show_arrows'], 15, 100);
-    $output = ob_get_contents();
-    ob_end_clean();
-    
-    return $output;
-}
-
-add_shortcode('arc_add_image_grid', 'arc_image_grid_add_grid_short');
+include 'arc-image-grid.php';
 
 // Custom meta boxes to post pages
-function arc_image_grid_meta_box_add() {
+function arc_meta_box_add() {
     $screens = array('post', 'page');
 
     foreach ($screens as $screen) {
-        add_meta_box('arc_image_grid_meta_data', 'ARC Image Grid', 'arc_image_grid_meta_box_callback', $screen);
+        add_meta_box('arc_meta_data', 'ARC Wordpress Library', 'arc_meta_box_callback', $screen);
     }
 }
+add_action('add_meta_boxes', 'arc_meta_box_add');
 
-add_action('add_meta_boxes', 'arc_image_grid_meta_box_add');
-
-function arc_image_grid_meta_box_callback($post) {
-    wp_nonce_field('arc_image_grid_meta_box_save', 'arc_image_grid_meta_box_nonce');
-
-    $name = get_post_meta($post->ID, '_arc_image_grid_name', true);
-
-    echo '<label for="arc_image_grid_name_field">';
-    echo 'Grid Name';
+function arc_meta_box_add_field($post, $id, $label, $type){
+    $value = get_post_meta($post->ID, $id, true);
+    $field = $id . "_field";
+    
+    echo '<p>';
+    echo '<strong>' . $label . '</strong>';
+    echo '</p>';
+    
+    echo '<p>';
+    echo '<label class="screen-reader-text" for="' . $field . '">';
+    echo $label;
     echo '</label>';
-    echo '<input type="text" id="arc_image_grid_name_field" name="arc_image_grid_name" value="' . esc_attr($name) . '" size="25" />';
+    
+    switch($type){
+      case 'image':
+          echo '<input type="hidden" id="' . $field . '" name="' . $id . '" value="' . esc_attr($value) . '" />';
+          echo '<img id="' . $id . '" style="width: 200px"/>';
+          echo '<button id="' . $id . '_button">Change Image</button>';
+          //TODO: Add script for button
+          break;
+      
+      default:
+          echo '<input type="text" id="' . $field . '" name="' . $id . '" value="' . esc_attr($value) . '" size="25" />';
+    }
+    
+    echo '</p>';
+}
 
-    $img = get_post_meta($post->ID, '_arc_image_grid_img', true);
-
+function arc_meta_box_callback($post) {
+    wp_nonce_field('arc_meta_box_save', 'arc_meta_box_nonce');;
+    
+    arc_meta_box_add_field($post, '_arc_image_grid_img', 'Image', 'image');
+    echo '<br/>';
+    
+    arc_meta_box_add_field($post, '_arc_image_grid_name', 'Grid Name', 'text');
+    echo '<br/>';
+    
+    echo '<br><h3>Event Details</h3>';
+    arc_meta_box_add_field($post, '_arc_start_date', 'Start Date', 'date');
+    echo '<br/>';
+    
+    arc_meta_box_add_field($post, '_arc_end_date', 'End Date', 'date');
+    echo '<br/>';
+    
+    arc_meta_box_add_field($post, '_arc_venue', 'Venue', 'text');
     echo '<br/>';
 
-    echo '<label for="arc_image_grid_img_field">';
-    echo 'Grid Name';
-    echo '</label>';
-    echo '<input type="hidden" id="arc_image_grid_img_field" name="arc_image_grid_img" value="' . esc_attr($img) . '" />';
-    echo '<img id="arc_image_grid_img" style="width: 200px"/>';
-    echo '<button id="arc_image_grid_img_button">Change Image</button>';
     ?>
     <script>
-        function arcImageGridProperties_ImageClick(event) {
+        function arcProperties_ImageClick(event) {
             var gallery_window = wp.media({
                 title: 'Select an image to display on image grids.',
                 library: {type: 'image'},
@@ -160,8 +88,8 @@ function arc_image_grid_meta_box_callback($post) {
             gallery_window.on('select', function () {
                 var selection = gallery_window.state().get('selection').first().toJSON();
 
-                document.getElementById('arc_image_grid_img_field').value = selection.url;
-                document.getElementById('arc_image_grid_img').src = selection.url;
+                document.getElementById('_arc_image_grid_img_field').value = selection.url;
+                document.getElementById('_arc_image_grid_img').src = selection.url;
             });
 
             gallery_window.open();
@@ -170,31 +98,31 @@ function arc_image_grid_meta_box_callback($post) {
             return false;
         }
 
-        function arcImageGridProperties_Initialize() {
-            var value = document.getElementById('arc_image_grid_img_field').value;
+        function arcProperties_Initialize() {
+            var value = document.getElementById('_arc_image_grid_img_field').value;
 
             if (value && value !== null) {
-                var img = document.getElementById('arc_image_grid_img');
+                var img = document.getElementById('_arc_image_grid_img');
                 img.src = value;
             }
 
-            var button = document.getElementById('arc_image_grid_img_button');
-            button.addEventListener('click', arcImageGridProperties_ImageClick);
+            var button = document.getElementById('_arc_image_grid_img_button');
+            button.addEventListener('click', arcProperties_ImageClick);
         }
 
-        arcImageGridProperties_Initialize();
+        arcProperties_Initialize();
     </script>
     <?php
 }
 
-function arc_image_grid_meta_box_save($post_id) {
+function arc_meta_box_save($post_id) {
 // Check if our nonce is set. This verifies it's from the correct screen
-    if (!isset($_POST['arc_image_grid_meta_box_nonce'])) {
+    if (!isset($_POST['arc_meta_box_nonce'])) {
         return;
     }
 
 // Check if the nonce is valid
-    if (!wp_verify_nonce($_POST['arc_image_grid_meta_box_nonce'], 'arc_image_grid_meta_box_save')) {
+    if (!wp_verify_nonce($_POST['arc_meta_box_nonce'], 'arc_meta_box_save')) {
         return;
     }
 
@@ -215,11 +143,19 @@ function arc_image_grid_meta_box_save($post_id) {
     }
 
 // Section to save the information
-    $value = sanitize_text_field($_POST['arc_image_grid_name']);
+    $value = sanitize_text_field($_POST['_arc_image_grid_name']);
     update_post_meta($post_id, '_arc_image_grid_name', $value);
 
-    $value = sanitize_text_field($_POST['arc_image_grid_img']);
+    $value = sanitize_text_field($_POST['_arc_image_grid_img']);
     update_post_meta($post_id, '_arc_image_grid_img', $value);
+    
+    $value = sanitize_text_field($_POST['_arc_start_date']);
+    update_post_meta($post_id, '_arc_start_date', $value);
+    
+    $value = sanitize_text_field($_POST['_arc_end_date']);
+    update_post_meta($post_id, '_arc_end_date', $value);
+    
+    $value = sanitize_text_field($_POST['_arc_venue']);
+    update_post_meta($post_id, '_arc_venue', $value);
 }
-
-add_action('save_post', 'arc_image_grid_meta_box_save');
+add_action('save_post', 'arc_meta_box_save');

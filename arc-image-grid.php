@@ -1,21 +1,5 @@
 <?php
-/*
-  Plugin Name: ARC Image Grid
-  Description: Displays image grid.
-  Author: Mark McKellar
-  Text Domain: arc-image-grid
- */
 defined('ABSPATH') or die('No script kiddies please!');
-
-class ARCImageGridCell {
-
-    public $id = 0;
-    public $name = 'MISSINGNO.';
-    public $post_type = 'post';
-    public $url = '#';
-    public $metadata = array();
-
-}
 
 // Enable the arc image grid javascript and css files.
 function arc_image_grid_scripts() {
@@ -72,7 +56,7 @@ function arc_image_grid_add_grid($name, $img_width, $img_height, $max_col_count,
                 echo 'imageList.push(new ArcImageGridImage(' . json_encode($currentObj) . "));\n";
             }
 
-            $currentObj = new ARCImageGridCell;
+            $currentObj = new ARCPostCell;
             $currentObj->id = $result->ID;
             $currentObj->name = $result->post_title;
             $currentObj->post_type = $result->post_type;
@@ -115,111 +99,3 @@ function arc_image_grid_add_grid_short($atts, $content = null) {
 }
 
 add_shortcode('arc_add_image_grid', 'arc_image_grid_add_grid_short');
-
-// Custom meta boxes to post pages
-function arc_image_grid_meta_box_add() {
-    $screens = array('post', 'page');
-
-    foreach ($screens as $screen) {
-        add_meta_box('arc_image_grid_meta_data', 'ARC Image Grid', 'arc_image_grid_meta_box_callback', $screen);
-    }
-}
-
-add_action('add_meta_boxes', 'arc_image_grid_meta_box_add');
-
-function arc_image_grid_meta_box_callback($post) {
-    wp_nonce_field('arc_image_grid_meta_box_save', 'arc_image_grid_meta_box_nonce');
-
-    $name = get_post_meta($post->ID, '_arc_image_grid_name', true);
-
-    echo '<label for="arc_image_grid_name_field">';
-    echo 'Grid Name';
-    echo '</label>';
-    echo '<input type="text" id="arc_image_grid_name_field" name="arc_image_grid_name" value="' . esc_attr($name) . '" size="25" />';
-
-    $img = get_post_meta($post->ID, '_arc_image_grid_img', true);
-
-    echo '<br/>';
-
-    echo '<label for="arc_image_grid_img_field">';
-    echo 'Grid Name';
-    echo '</label>';
-    echo '<input type="hidden" id="arc_image_grid_img_field" name="arc_image_grid_img" value="' . esc_attr($img) . '" />';
-    echo '<img id="arc_image_grid_img" style="width: 200px"/>';
-    echo '<button id="arc_image_grid_img_button">Change Image</button>';
-    ?>
-    <script>
-        function arcImageGridProperties_ImageClick(event) {
-            var gallery_window = wp.media({
-                title: 'Select an image to display on image grids.',
-                library: {type: 'image'},
-                multiple: false,
-                button: {text: 'Select'}
-            });
-
-            gallery_window.on('select', function () {
-                var selection = gallery_window.state().get('selection').first().toJSON();
-
-                document.getElementById('arc_image_grid_img_field').value = selection.url;
-                document.getElementById('arc_image_grid_img').src = selection.url;
-            });
-
-            gallery_window.open();
-
-            event.preventDefault();
-            return false;
-        }
-
-        function arcImageGridProperties_Initialize() {
-            var value = document.getElementById('arc_image_grid_img_field').value;
-
-            if (value && value !== null) {
-                var img = document.getElementById('arc_image_grid_img');
-                img.src = value;
-            }
-
-            var button = document.getElementById('arc_image_grid_img_button');
-            button.addEventListener('click', arcImageGridProperties_ImageClick);
-        }
-
-        arcImageGridProperties_Initialize();
-    </script>
-    <?php
-}
-
-function arc_image_grid_meta_box_save($post_id) {
-// Check if our nonce is set. This verifies it's from the correct screen
-    if (!isset($_POST['arc_image_grid_meta_box_nonce'])) {
-        return;
-    }
-
-// Check if the nonce is valid
-    if (!wp_verify_nonce($_POST['arc_image_grid_meta_box_nonce'], 'arc_image_grid_meta_box_save')) {
-        return;
-    }
-
-// If this is an autosave, our form has not been submitted, so we don't want to do anything.
-    if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
-        return;
-    }
-
-// Check the user's permissions.
-    if (isset($_POST['post_type']) && 'page' == $_POST['post_type']) {
-        if (!current_user_can('edit_page', $post_id)) {
-            return;
-        }
-    } else {
-        if (!current_user_can('edit_post', $post_id)) {
-            return;
-        }
-    }
-
-// Section to save the information
-    $value = sanitize_text_field($_POST['arc_image_grid_name']);
-    update_post_meta($post_id, '_arc_image_grid_name', $value);
-
-    $value = sanitize_text_field($_POST['arc_image_grid_img']);
-    update_post_meta($post_id, '_arc_image_grid_img', $value);
-}
-
-add_action('save_post', 'arc_image_grid_meta_box_save');
