@@ -5,7 +5,7 @@ defined('ABSPATH') or die('No script kiddies please!');
 function arc_image_grid_scripts() {
     wp_enqueue_style('arc-image-grid-style', plugins_url('css/arc-image-grid.css', __FILE__), array());
 
-    wp_enqueue_script('arc-image-grid', plugins_url('js/arc-image-grid.js', __FILE__));
+    wp_enqueue_script('arc-image-grid', plugins_url('js/arc-image-grid.js', __FILE__), array('arc'));
 }
 
 add_action('wp_enqueue_scripts', 'arc_image_grid_scripts');
@@ -68,7 +68,7 @@ function arc_image_grid_add_grid($name, $img_width, $img_height, $max_col_count,
     }
 
     if ($currentObj != null) {
-        echo 'imageList.push(new ArcImageGridImage(' . json_encode($currentObj) . "));";
+        echo 'imageList.push(new ArcImage(' . json_encode($currentObj) . "));";
     }
     ?>
             

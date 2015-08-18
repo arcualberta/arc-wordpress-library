@@ -6,9 +6,13 @@
   Text Domain: arc-image-grid
  */
 defined('ABSPATH') or die('No script kiddies please!');
+// Define globals
+global $arcEnableBootstrap;
+
+// Set globals
+$arcEnableBootstrap = true;
 
 class ARCPostCell {
-
     public $id = 0;
     public $name = 'MISSINGNO.';
     public $post_type = 'post';
@@ -16,6 +20,24 @@ class ARCPostCell {
     public $metadata = array();
 }
 
+// Add scripts
+function arc_scripts(){
+    if($arcEnableBootstrap){
+        wp_register_script( 'bootstrap', plugins_url('js/bootstrap.min.js'), array() );
+    
+        wp_enqueue_script('bootstrap');
+    }
+    
+    wp_enqueue_script('arc', plugins_url('js/arc.js', __FILE__));
+}
+add_action('wp_enqueue_scripts', 'arc_scripts');
+
+// Functions that can be resused
+function arc_convert_content($content, $data){
+    
+}
+
+// Include components
 include 'arc-image-grid.php';
 
 // Custom meta boxes to post pages
