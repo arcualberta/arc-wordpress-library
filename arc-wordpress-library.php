@@ -38,6 +38,7 @@ function arc_convert_content($content, $data){
 }
 
 // Include components
+include 'arc-carousel.php';
 include 'arc-image-grid.php';
 
 // Custom meta boxes to post pages
