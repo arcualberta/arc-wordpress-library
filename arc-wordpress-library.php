@@ -22,10 +22,12 @@ class ARCPostCell {
 
 // Add scripts
 function arc_scripts(){
+    global $arcEnableBootstrap;
     if($arcEnableBootstrap){
-        wp_register_script( 'bootstrap', plugins_url('js/bootstrap.min.js'), array() );
+        wp_enqueue_style('bootstrap_style', plugins_url('css/bootstrap.min.css', __FILE__), array() );
+        wp_register_script( 'bootstrap_script', plugins_url('js/bootstrap.min.js', __FILE__), array() );
     
-        wp_enqueue_script('bootstrap');
+        wp_enqueue_script('bootstrap_script');
     }
     
     wp_enqueue_script('arc', plugins_url('js/arc.js', __FILE__));
@@ -34,7 +36,8 @@ add_action('wp_enqueue_scripts', 'arc_scripts');
 
 // Functions that can be resused
 function arc_convert_content($content, $data){
-    
+    eval('$result = "' . $content . '";');
+    echo $result;
 }
 
 // Include components

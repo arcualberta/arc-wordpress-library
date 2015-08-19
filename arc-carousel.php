@@ -17,6 +17,7 @@ function arc_create_carousel($id, $data, $content) {
     <div class="carousel-inner" role="listbox">
         <?php foreach ($data as $key => $value) { ?>
             <div class="item<?php if($key == 0) { echo ' acive'; } ?>">
+                <?php echo $content ?>
                 <?php arc_convert_content($content, $value); ?>
             </div>
         <?php } ?>
