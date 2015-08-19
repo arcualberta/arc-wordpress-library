@@ -33,3 +33,14 @@ function arc_create_carousel($id, $data, $content) {
 </div>
     <?php
 }
+
+function arc_image_carousel($id, $data, $imagePath, $titlePath = '', $descriptionPath = ''){
+    $content = '<div class="carousel-image" style=\"background-image: url(\'' . $imagePath . '\')\">';
+    $content .= '<div>';
+    $content .= '<h1>' . $titlePath . '</h1>';
+    $content .= '<p>' . $descriptionPath . '</p>';
+    $content .= '</div>';
+    $content .= '</div>';
+    
+    arc_create_carousel($id, $data, $content);
+}
