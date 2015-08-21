@@ -6,11 +6,10 @@
   Text Domain: arc-image-grid
  */
 defined('ABSPATH') or die('No script kiddies please!');
-// Define globals
-global $arcEnableBootstrap;
 
 // Set globals
 $arcEnableBootstrap = true;
+$arcEnableJQuery = true;
 
 class ARCPostCell {
     public $id = 0;
@@ -23,9 +22,15 @@ class ARCPostCell {
 // Add scripts
 function arc_scripts(){
     global $arcEnableBootstrap;
+    global $arcEnableJQuery;
+    
+    if($arcEnableJQuery){
+        wp_enqueue_script( 'jquery_script', plugins_url('js/jquery-1.11.3.min.js', __FILE__), array() );
+    }
+    
     if($arcEnableBootstrap){
         wp_enqueue_style('bootstrap_style', plugins_url('css/bootstrap.min.css', __FILE__), array() );
-        wp_register_script( 'bootstrap_script', plugins_url('js/bootstrap.min.js', __FILE__), array() );
+        wp_register_script( 'bootstrap_script', plugins_url('js/bootstrap.min.js', __FILE__), array('jquery_script') );
     
         wp_enqueue_script('bootstrap_script');
     }
@@ -41,6 +46,7 @@ function arc_convert_content($content, $data){
 }
 
 // Include components
+include 'arc-sections.php';
 include 'arc-carousel.php';
 include 'arc-image-grid.php';
 
@@ -75,6 +81,12 @@ function arc_meta_box_add_field($post, $id, $label, $type){
           //TODO: Add script for button
           break;
       
+      case 'textarea':
+          echo '<textarea id="' . $field . '" name="' . $id . '">';
+          echo htmlspecialchars($value);
+          echo '</textarea>';
+          break;
+      
       default:
           echo '<input type="text" id="' . $field . '" name="' . $id . '" value="' . esc_attr($value) . '" size="25" />';
     }
@@ -100,7 +112,7 @@ function arc_meta_box_callback($post) {
     
     arc_meta_box_add_field($post, '_arc_venue', 'Venue', 'text');
     echo '<br/>';
-
+    
     ?>
     <script>
         function arcProperties_ImageClick(event) {
