@@ -55,7 +55,7 @@ function arc_image_grid_get_entries($name, $objectOutputFunction, $random = fals
     }
 
     if ($currentObj != null) {
-        json_encode($currentObj);
+        call_user_func($objectOutputFunction, $currentObj);
     }
 }
 

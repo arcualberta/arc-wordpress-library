@@ -1,11 +1,14 @@
 <?php
+
 defined('ABSPATH') or die('No script kiddies please!');
 
 function arc_sections_scripts() {
+    
 }
+
 add_action('wp_enqueue_scripts', 'arc_sections_scripts');
 
-function arc_get_posts_by_category($category, $objectOutputFunction, $random = false, $limit = 100){
+function arc_get_posts_by_category($category, $objectOutputFunction, $random = false, $limit = 100) {
     global $wpdb;
     global $result;
 
@@ -25,19 +28,22 @@ function arc_get_posts_by_category($category, $objectOutputFunction, $random = f
         $query .= "ORDER BY p.ID, p.post_date DESC ";
     }
 
-    $query .= "LIMIT " . $limit;
-    
     $results = $wpdb->get_results($query, OBJECT);
-    
-    error_log(count($results));
-    
+
     $currentId = null;
     $currentObj = null;
+    $index = 0;
     foreach ($results as $result) {
         if ($result->ID != $currentId) {
 
             if ($currentObj != null) {
                 call_user_func($objectOutputFunction, $currentObj);
+                ++$index;
+            }
+
+            if ($index >= $limit) {
+                $currentObj = null;
+                break;
             }
 
             $currentObj = new ARCPostCell;
@@ -52,6 +58,39 @@ function arc_get_posts_by_category($category, $objectOutputFunction, $random = f
     }
 
     if ($currentObj != null) {
-        json_encode($currentObj);
+        call_user_func($objectOutputFunction, $currentObj);
     }
+}
+
+function arc_limit_content($data, $contentPath, $contentLimit){
+    echo 'TODO: LIMIT CONTENT';
+}
+
+function arc_create_section($id, $data, $imagePath, $titlePath = '', $contentPath = '', $urlPath = '', $classes = '', $isVertical = true){
+    ?>
+<div id="<?php echo $id ?>" class="arc-sections <?php echo $classes ?>">
+    <?php
+    foreach($data as $key => $value){
+        ?>
+    <div class="arc-section">
+        <img src="<?php echo arc_convert_content($imagePath, $value)?>"/>
+        <h4><?php echo arc_convert_content($titlePath, $value)?></h4>
+        <div class='arc-section-content'>
+            <?php echo arc_limit_content($value, $contentPath, 140) ?>
+            <a class="arc-read-more" href="<?php echo arc_convert_content($urlPath, $value)?>">[Read More]</a>
+        </div>
+    </div>
+            <?php
+    }
+        ?>
+</div>
+    <?php
+}
+
+function arc_section_by_category($id, $categoryName, $isVertical = true, $classes = '', $limit = 3) {
+    global $arc_carousel_array;
+    $arc_carousel_array = array();
+    
+    arc_get_posts_by_category($categoryName, 'arc_carousel_array_push', false, $limit);
+    arc_create_section($id, $arc_carousel_array, '{$data->metadata["_arc_image_grid_img"]}', '$data->name', 'TODO: Obtain page data', '$data-url', $classes, $isVertical);
 }
