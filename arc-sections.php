@@ -62,10 +62,20 @@ function arc_get_posts_by_category($category, $objectOutputFunction, $random = f
     }
 }
 
-function arc_limit_content($data, $contentPath, $contentLimit){
+function arc_limit_content($data, $contentPath, $contentLimit, $breakChar = ".", $padding = "..."){
     $result = arc_convert_content($contentPath, $data);
-    $result = preg_replace("/<[^(p|br|h1|h2|h3|h4)][^>]*\>/i", "", $result); 
+    //$result = preg_replace("/<[^(p|br|h1|h2|h3|h4)][^>]*\>/i", "", $result); 
+    $result = preg_replace("/<br[^>]+\>/i", "\n", $result); 
+    $result = preg_replace("/<[^>]+\>/i", "", $result); 
     $result = trim($result);
+    
+    // Split the results to match the content limit. We will stop it at the periods
+    if(strlen($result) > $contentLimit && false !== ($breakpoint = strpos($result, $breakChar, $contentLimit))){ // Is the breakpoint here in the line
+        if($breakpoint < strlen($result) - 1){
+            $result = substr($result, 0, $breakpoint) . $padding;
+        }
+    }
+    
     $result = nl2br($result); 
     
     return $result;
