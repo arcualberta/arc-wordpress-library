@@ -63,7 +63,12 @@ function arc_get_posts_by_category($category, $objectOutputFunction, $random = f
 }
 
 function arc_limit_content($data, $contentPath, $contentLimit){
-    echo 'TODO: LIMIT CONTENT';
+    $result = arc_convert_content($contentPath, $data);
+    $result = preg_replace("/<[^(p|br|h1|h2|h3|h4)][^>]*\>/i", "", $result); 
+    $result = trim($result);
+    $result = nl2br($result); 
+    
+    return $result;
 }
 
 function arc_create_section($id, $data, $imagePath, $titlePath = '', $contentPath = '', $urlPath = '', $classes = '', $isVertical = true){
@@ -92,5 +97,5 @@ function arc_section_by_category($id, $categoryName, $isVertical = true, $classe
     $arc_carousel_array = array();
     
     arc_get_posts_by_category($categoryName, 'arc_carousel_array_push', false, $limit);
-    arc_create_section($id, $arc_carousel_array, '{$data->metadata["_arc_image_grid_img"]}', '$data->name', 'TODO: Obtain page data', '$data-url', $classes, $isVertical);
+    arc_create_section($id, $arc_carousel_array, '{$data->metadata["_arc_image_grid_img"]}', '$data->name', '{$data->get_post()->post_content}', '$data->url', $classes, $isVertical);
 }

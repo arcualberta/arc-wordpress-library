@@ -17,6 +17,12 @@ class ARCPostCell {
     public $post_type = 'post';
     public $url = '#';
     public $metadata = array();
+    
+    function get_post(){
+        $post = get_post($this->id);
+        
+        return $post;
+    }
 }
 
 // Add scripts
@@ -42,7 +48,7 @@ add_action('wp_enqueue_scripts', 'arc_scripts');
 // Functions that can be resused
 function arc_convert_content($content, $data){
     eval('$result = "' . $content . '";');
-    echo $result;
+    return $result;
 }
 
 // Include components
