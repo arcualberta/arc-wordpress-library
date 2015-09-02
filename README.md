@@ -1,11 +1,54 @@
 # ARC WordPress Library
 ## PHP Classes
 ### ARCPostCell  
+This is used on the query functions to represent a post/page and its containing metadata.  
+  
+```
+class ARCPostCell {
+    public $id = 0;
+    public $name = 'MISSINGNO.';
+    public $post_type = 'post';
+    public $url = '#';
+    public $metadata = array();
+    
+    function get_post(){
+        $post = get_post($this->id);
+        
+        return $post;
+    }
+}
+```
 
 ## Javascript Classes
-### ARCImage
+### ARCImage 
+This is used as a parallel object to the PHP object ARCPostCell which provides easy access to the image metadata value.  
+   
+```  
+var ArcImage = function (data) {
+    this.imageUrl = data.metadata['_arc_image_grid_img'];
+    this.data = data;
+};
+```  
+  
 ### ARCImageGrid
-
+A javascript object used to create and display and Image Grid on the page.  
+  
+```  
+var ArcImageGrid = function (id, imageWidth, imageHeight, maxColCount, images, content, buttonText, timer) {
+    this.id = id;
+    this.imageWidth = imageWidth;
+    this.imageHeight = imageHeight;
+    this.maxColCount = maxColCount;
+    this.pagesPerGrid = maxColCount * maxColCount;
+    this.page = 0;
+    this.images = images;
+    this.content = content;
+    this.buttonText = buttonText;
+    this.timeout = timer > 0 ? timer * 1000 : 0;
+    this.timer = null;
+};
+```  
+  
 ## Helper Functions
 ### arc_convert_content($content, $data)
 This function can be used to convert the $content string to include the content provided by the $data object. You can define content in the exact same way you would for a php double quotation string by referencing the $data object.  
