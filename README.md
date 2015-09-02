@@ -21,7 +21,45 @@ $result = arc_convert_content('Hi {$data->name}! Welcome to {$data->metadata["ur
 This will create the string: Hi ARC Tools! Welcome to https://github.com/arcualberta/arc-wordpress-library.  
   
 ### arc_image_grid_get_entries($name, $objectOutputFunction, $random = false, $limit = 100)
+Obtains pages/posts whose Image Grid Name matches the value given by $name.  
+*$name*                 The name of the image grid to use.  
+*$objectOutputFunction* The function will pass the resulting objects from the query(one at a time) to the function to be handled.  
+*$random*               If true then the results are extracted from the database randomly; otherwise, the results are given in ascending order from when they were published.  
+*$limit*                The maximum number of results we wish to extract.  
+  
+Example:  
+```
+$test_array = array();
+
+function test_add_result($current_object){
+    global $test_array;
+
+    array_push($test_array, $current_object);
+}
+
+arc_image_grid_get_entries('TEST', 'test_add_result', true, 100);
+```  
+ 
 ### arc_get_posts_by_category($category, $objectOutputFunction, $random = false, $limit = 100)
+Obtains posts from a given category.
+*$category*             The id of the category. Usually this is the name of the category in lowercase.  
+*$objectOutputFunction* The function will pass the resulting objects from the query(one at a time) to the function to be handled.  
+*$random*               If true then the results are extracted from the database randomly; otherwise, the results are given in ascending order from when they were published.  
+*$limit*                The maximum number of results we wish to extract.  
+  
+Example:  
+```
+$test_array = array();
+
+function test_add_result($current_object){
+    global $test_array;
+
+    array_push($test_array, $current_object);
+}
+
+arc_get_posts_by_category('event', 'test_add_result', true, 100);
+```  
+
 ### arc_limit_content($data, $contentPath, $contentLimit, $breakChar = ".", $padding = "...")
 
 ## ARC Image Grid
