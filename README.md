@@ -1,4 +1,29 @@
 # ARC WordPress Library
+## PHP Classes
+### ARCPostCell  
+
+## Javascript Classes
+### ARCImage
+### ARCImageGrid
+
+## Helper Functions
+### arc_convert_content($content, $data)
+This function can be used to convert the $content string to include the content provided by the $data object. You can define content in the exact same way you would for a php double quotation string by referencing the $data object.  
+Parameters:  
+*$content*          The string to replace values in.  
+*$data*             The object used to derive values for the given string.  
+  
+Example:  
+'''
+$input = array("name" => "ARC Tools", "metadata" => array("url" => "https://github.com/arcualberta/arc-wordpress-library"));  
+$result = arc_convert_content('Hi {$data->name}! Welcome to {$data->metadata["url"]}.', $input);
+'''
+This will create the string: Hi ARC Tools! Welcome to https://github.com/arcualberta/arc-wordpress-library.  
+  
+### arc_image_grid_get_entries($name, $objectOutputFunction, $random = false, $limit = 100)
+### arc_get_posts_by_category($category, $objectOutputFunction, $random = false, $limit = 100)
+### arc_limit_content($data, $contentPath, $contentLimit, $breakChar = ".", $padding = "...")
+
 ## ARC Image Grid
 The ARC Image Grid is a wordpress plugin which allows you to display a grid of images linking to posts and pages.
 
