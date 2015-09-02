@@ -14,10 +14,10 @@ Parameters:
 *$data*             The object used to derive values for the given string.  
   
 Example:  
-'''
+```
 $input = array("name" => "ARC Tools", "metadata" => array("url" => "https://github.com/arcualberta/arc-wordpress-library"));  
 $result = arc_convert_content('Hi {$data->name}! Welcome to {$data->metadata["url"]}.', $input);
-'''
+```
 This will create the string: Hi ARC Tools! Welcome to https://github.com/arcualberta/arc-wordpress-library.  
   
 ### arc_image_grid_get_entries($name, $objectOutputFunction, $random = false, $limit = 100)
