@@ -1,12 +1,6 @@
 <?php
 
-defined('ABSPATH') or die('No script kiddies please!');
-
-function arc_sections_scripts() {
-    
-}
-
-add_action('wp_enqueue_scripts', 'arc_sections_scripts');
+defined('ABSPATH') or die('No');
 
 function arc_get_posts_by_category($category, $objectOutputFunction, $random = false, $limit = 100) {
     global $wpdb;

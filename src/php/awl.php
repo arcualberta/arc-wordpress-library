@@ -1,11 +1,11 @@
 <?php
 /*
-  Plugin Name: ARC Wordpress Library
+  Plugin Name: AWL
   Description: A container for commonly used graphical components on websites
-  Author: Mark McKellar
+  Author: Omar Rodriguez & Mark McKellar
   Text Domain: arc-image-grid
  */
-defined('ABSPATH') or die('No script kiddies please!');
+defined('ABSPATH') or die('No');
 
 // Set globals
 $arcEnableBootstrap = true;
@@ -31,7 +31,7 @@ function arc_scripts(){
     global $arcEnableJQuery;
     
     if($arcEnableJQuery){
-        wp_enqueue_script( 'jquery_script', plugins_url('js/jquery-1.11.3.min.js', __FILE__), array() );
+        wp_enqueue_script( 'jquery_script', plugins_url('js/jquery.min.js', __FILE__), array() );
     }
     
     if($arcEnableBootstrap){
@@ -40,8 +40,9 @@ function arc_scripts(){
     
         wp_enqueue_script('bootstrap_script');
     }
-    
-    wp_enqueue_script('arc', plugins_url('js/arc.js', __FILE__));
+
+    wp_enqueue_style('awl_style', plugins_url('css/awl.css', __FILE__));
+    wp_enqueue_script('awl_script', plugins_url('js/awl.js', __FILE__));
 }
 add_action('wp_enqueue_scripts', 'arc_scripts');
 
@@ -52,9 +53,9 @@ function arc_convert_content($content, $data){
 }
 
 // Include components
-include 'arc-sections.php';
-include 'arc-carousel.php';
-include 'arc-image-grid.php';
+include 'sections.php';
+include 'carousel.php';
+include 'image-grid.php';
 
 // Custom meta boxes to post pages
 function arc_meta_box_add() {

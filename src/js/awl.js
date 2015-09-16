@@ -23,6 +23,6 @@ var arcCheckDocumentReady = function (inputFunction) {
 
 /* Useful Models */
 var ArcImage = function (data) {
-    this.imageUrl = data.metadata['_arc_image_grid_img'];
+    this.imageUrl = data.metadata._arc_image_grid_img;
     this.data = data;
 };

@@ -1,14 +1,5 @@
 <?php
-defined('ABSPATH') or die('No script kiddies please!');
-
-// Enable the arc image grid javascript and css files.
-function arc_image_grid_scripts() {
-    wp_enqueue_style('arc-image-grid-style', plugins_url('css/arc-image-grid.css', __FILE__), array());
-
-    wp_enqueue_script('arc-image-grid', plugins_url('js/arc-image-grid.js', __FILE__), array('arc'));
-}
-
-add_action('wp_enqueue_scripts', 'arc_image_grid_scripts');
+defined('ABSPATH') or die('No');
 
 function arc_image_grid_get_entries($name, $objectOutputFunction, $random = false, $limit = 100) {
     global $wpdb;
@@ -84,7 +75,7 @@ function arc_image_grid_add_grid($name, $img_width, $img_height, $max_col_count,
     arc_image_grid_get_entries($name, 'arc_image_grid_create_JS_cell', $random, $limit);
     ?>
 
-            new ArcImageGrid('<?php echo $id ?>', <?php echo $img_width ?>, <?php echo $img_height ?>, <?php echo $max_col_count ?>, imageList, <?php echo json_encode($content) ?>, <?php echo json_encode($button_text) ?>, <?php echo $timer_seconds ?>);
+            new awl.imageGrid('<?php echo $id ?>', <?php echo $img_width ?>, <?php echo $img_height ?>, <?php echo $max_col_count ?>, imageList, <?php echo json_encode($content) ?>, <?php echo json_encode($button_text) ?>, <?php echo $timer_seconds ?>);
         }
         arcCheckDocumentReady(init<?php echo $id ?>);
     </script>

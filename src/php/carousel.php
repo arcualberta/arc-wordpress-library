@@ -1,5 +1,5 @@
 <?php
-defined('ABSPATH') or die('No script kiddies please!');
+defined('ABSPATH') or die('No');
 $arc_carousel_array = array();
 
 function arc_carousel_array_push($currentObj){
@@ -7,12 +7,6 @@ function arc_carousel_array_push($currentObj){
     
     array_push($arc_carousel_array, $currentObj);
 }
-
-function arc_carousel_scripts() {
-    wp_enqueue_style('arc-carousel-style', plugins_url('css/arc-carousel.css', __FILE__), array());
-    wp_enqueue_script('arc-carousel', plugins_url('js/arc-carousel.js', __FILE__), array('arc'));
-}
-add_action('wp_enqueue_scripts', 'arc_carousel_scripts');
 
 function arc_create_carousel($id, $data, $content) { 
     ?>
