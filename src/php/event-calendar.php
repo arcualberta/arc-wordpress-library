@@ -1,4 +1,5 @@
-<?php namespace Awl
+<?php 
+namespace Awl;
 defined('ABSPATH') or die('No');
 
 
@@ -9,9 +10,9 @@ function add_event_calendar($atts, $content = null) {
 	ob_start();
 	?>
 		<script>
-			new awl.eventCalendar(<?php namespace Awl echo $a['name']; ?>);
+			new awl.eventCalendar(<?php echo $a['name']; ?>);
 		</script>
-	<?php namespace Awl
+	<?php
 	return ob_get_clean();
 
 }
