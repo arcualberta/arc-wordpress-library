@@ -2,7 +2,7 @@
 /*
   Plugin Name: AWL
   Description: A container for commonly used graphical components on websites
-  Author: Omar Rodriguez & Mark McKellar
+  Author: <a href="http://omarrodriguez.org/">Omar Rodriguez</a> & <a href="http://www.markmckellar.com/">Mark McKellar</a>
   Text Domain: arc-image-grid
  */
 defined('ABSPATH') or die('No');
@@ -56,6 +56,8 @@ function arc_convert_content($content, $data){
 include 'sections.php';
 include 'carousel.php';
 include 'image-grid.php';
+include 'event-calendar.php';
+
 
 // Custom meta boxes to post pages
 function arc_meta_box_add() {
