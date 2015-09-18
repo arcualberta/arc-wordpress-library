@@ -5,7 +5,7 @@ module.exports = function(grunt) {
     'src/js/main.js',
     'src/js/awl.js',
     'src/js/image-grid.js',
-    '/src/event-calendar.js'
+    'src/js/event-calendar.js'
   ];
 
   var cssFiles = [

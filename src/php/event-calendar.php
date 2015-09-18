@@ -2,7 +2,6 @@
 namespace Awl;
 defined('ABSPATH') or die('No');
 
-
 function add_event_calendar($atts, $content = null) {
 	$a = shortcode_atts(array(
 		'name' => 'awl_event_calendar'
@@ -13,7 +12,9 @@ function add_event_calendar($atts, $content = null) {
 			new awl.eventCalendar(<?php echo $a['name']; ?>);
 		</script>
 	<?php
-	return ob_get_clean();
+	$output = ob_get_contents();
+	ob_end_clean();
+	return $output;
 
 }
 
