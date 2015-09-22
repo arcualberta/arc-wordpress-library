@@ -25,7 +25,6 @@ module.exports = function(grunt) {
     },
     concat: {
       options: {
-        separator: ';',
       },
       js: {
         src: jsFiles,

@@ -1,4 +1,5 @@
-// Arc image Grid CSS
+
+/* Arc image Grid CSS */
 div.arc-image-grid {
     padding: 0;
     
@@ -119,5 +120,6 @@ div.arc-grid-container {
 }
 
 .arc-grid-right:before {
-    content: ">"
+    content: ">";
 }
+

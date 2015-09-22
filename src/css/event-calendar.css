@@ -1,7 +1,45 @@
 
 .awl-calendar-container {
 	width: 250px;
-	border-style: solid;
+ 	border-style: solid;
 	border-width: 1px;
-	border-color: #000;
+	margin: 5px auto 5px auto;
+}
+
+.awl-calendar-day {
+	width: 35px;
+	height: 25px;
+	text-align: center;
+}
+
+.awl-date-content-main {
+	height: 25px;
+}
+
+.awl-date-content-footer {
+	height: 4px;	
+}
+
+.awl-calendar-event {
+	background-color: #ED1E79;
+}
+
+#awl-calendar-month-container {
+	width: 150px;
+}
+
+#awl-calendar-month-name {
+	width: 100px;
+}
+
+#awl-calendar-year-container {
+	width: 100px;
+}
+
+#awl-calendar-header {
+	margin: 5px auto 5px auto;
+}
+
+#awl-calendar-body table {
+	margin: 5px auto 5px auto;
 }
