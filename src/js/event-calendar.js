@@ -82,7 +82,7 @@
 						for (var i=0; i<6; i++) {
 							result += '<tr>';
 							for (var j=0; j<7; j++) {
-								result += '<td class="awl-calendar-day" id=awl-calendar-'+ currentId++ +'>';
+								result += '<td class="awl-calendar-day" id="awl-calendar-'+ currentId++ +'">';
 								result += '<div class="awl-date-content">';
 								
 								result += '<div class="awl-date-content-main">';
@@ -125,6 +125,7 @@
 	var setCalendar = function() {
 		setCalendarDays();
 		setMonthYearNames();
+		highlightToday();
 	};
 
 	var setCalendarDays = function() {
@@ -154,6 +155,23 @@
 		$("#awl-calendar-year-name").html(currentYear);
 	};
 
+	var highlightToday = function() {
+		var date = new Date();
+		// remove today class
+		$('.awl-date-content-main').removeClass("awl-calendar-today");
+		if (date.getMonth() === currentMonth && 
+				date.getFullYear() === currentYear) {
+			// set today class
+
+			var today = date.getDate();
+			date.setDate(1);
+			var firstDay = date.getDay();
+
+			$('#awl-calendar-'+ (today + firstDay - 1) +' > .awl-date-content > .awl-date-content-main').addClass('awl-calendar-today');
+
+		}
+	};
+
 	var basePrevNextButtonBehaviour = function(direction, limit){
 			if (currentMonth == limit) {
 				currentYear += direction;
@@ -172,7 +190,7 @@
 		});
 	};
 
-	var highlightDate = function(){
+	var highlightEvent = function(){
 		$('#awl-calendar-4 > .awl-date-content > .awl-date-content-footer').addClass('awl-calendar-event');
 	};
 
@@ -182,7 +200,8 @@
  			setToday();
  			setCalendar();
  			setButtonBehaviour();
- 			highlightDate();
+ 			highlightEvent();
+ 			highlightToday();
  		});
  	};
 

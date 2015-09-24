@@ -43,6 +43,7 @@ function arc_scripts(){
 
     wp_enqueue_style('awl_style', plugins_url('css/awl.css', __FILE__));
     wp_enqueue_script('awl_script', plugins_url('js/awl.js', __FILE__));
+    wp_localize_script( 'awl_script', 'MyAjax', array( 'ajaxurl' => admin_url( 'admin-ajax.php' ) ) );
 }
 add_action('wp_enqueue_scripts', 'arc_scripts');
 
@@ -57,7 +58,7 @@ include 'sections.php';
 include 'carousel.php';
 include 'image-grid.php';
 include 'event-calendar.php';
-
+include 'events-ajax.php';
 
 // Custom meta boxes to post pages
 function arc_meta_box_add() {
