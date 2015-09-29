@@ -20,7 +20,63 @@ function add_event_calendar($atts, $content = null) {
 
 add_shortcode('awl_add_event_calendar', 'add_event_calendar');
 
-// SELECT DISTINCT post_id FROM wp_postmeta WHERE (meta_key='_arc_start_date' AND STR_TO_DATE(meta_value , '%Y-%m-%d') >= DATE('2000-01-01')) OR (meta_key='_arc_end_date' AND STR_TO_DATE(meta_value , '%Y-%m-%d') <= DATE('2018-01-01'))
+function events() {
+
+	$start_date = strval( $_GET['start_date'] );
+	$end_date = strval( $_GET['end_date'] );
+	$category = strval( $_GET['category'] );
+
+	global $wpdb;
+
+	$query = "
+		SELECT DISTINCT
+			posts.*, 
+			startmeta.meta_value AS start_value,
+			endmeta.meta_value AS end_value
+		FROM 
+			$wpdb->posts posts, 
+			$wpdb->postmeta startmeta		
+		INNER JOIN 
+			$wpdb->postmeta endmeta
+			ON endmeta.post_id = startmeta.post_id
+			AND endmeta.meta_key = '_arc_end_date'
+		INNER JOIN
+			$wpdb->term_relationships term_relationships
+			ON term_relationships.object_id = startmeta.post_id
+		INNER JOIN
+			$wpdb->term_taxonomy term_taxonomy
+			ON term_taxonomy.term_taxonomy_id = term_relationships.term_taxonomy_id
+		INNER JOIN
+			$wpdb->terms terms
+			ON terms.term_id = term_taxonomy.term_id
+
+		WHERE
+			posts.post_status = 'publish'
+			AND posts.post_type = 'post'
+			AND startmeta.meta_key = '_arc_start_date'
+			AND posts.ID = startmeta.post_id
+			AND terms.name = '" . $category . "'
+			AND (
+				(
+					STR_TO_DATE(startmeta.meta_value , '%Y-%m-%d') >= DATE('" . $start_date . "')
+					AND
+					STR_TO_DATE(startmeta.meta_value , '%Y-%m-%d') <= DATE('" . $end_date . "')
+				)
+				OR
+				( 
+					STR_TO_DATE(endmeta.meta_value , '%Y-%m-%d') <= DATE('" . $end_date . "')
+					AND
+					STR_TO_DATE(endmeta.meta_value , '%Y-%m-%d') >= DATE('" . $start_date . "')
+				)
+			)
+			;
+	";
 
 
+	$posts = $wpdb->get_results($query);
 
+	wp_send_json($posts); 
+}
+
+add_action('wp_ajax_events', 'Awl\events' ); 
+add_action('wp_ajax_nopriv_events', 'Awl\events' ); 

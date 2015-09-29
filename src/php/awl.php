@@ -58,7 +58,6 @@ include 'sections.php';
 include 'carousel.php';
 include 'image-grid.php';
 include 'event-calendar.php';
-include 'events-ajax.php';
 
 // Custom meta boxes to post pages
 function arc_meta_box_add() {
