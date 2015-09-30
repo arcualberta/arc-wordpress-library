@@ -324,7 +324,7 @@
 									currentMonthStarting1 + '-01',
 			end_date: currentYear + '-' + 
 								currentMonthStarting1 + '-' + 
-								(daysInMonth(currentYear, currentMonth) - 1),
+								(daysInMonth(currentMonth, currentYear)),
 			category: 'Event'
 		};
 		console.log(data);
