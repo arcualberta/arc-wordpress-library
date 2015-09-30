@@ -43,7 +43,7 @@ function arc_scripts(){
 
     wp_enqueue_style('awl_style', plugins_url('css/awl.css', __FILE__));
     wp_enqueue_script('awl_script', plugins_url('js/awl.js', __FILE__));
-    wp_localize_script( 'awl_script', 'MyAjax', array( 'ajaxurl' => admin_url( 'admin-ajax.php' ) ) );
+    wp_localize_script( 'awl_script', 'awlAjax', array( 'ajaxurl' => admin_url( 'admin-ajax.php' ) ) );
 }
 add_action('wp_enqueue_scripts', 'arc_scripts');
 

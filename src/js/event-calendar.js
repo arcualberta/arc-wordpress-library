@@ -1,6 +1,13 @@
 (function(awl){
 	"use strict";
 
+	var currentMonth,
+		currentYear,
+		currentDayName = 0,
+		currentDayEntryId = 0,
+		calendarDate = new Date(),
+		eventList = {};
+
 	var monthNames = [
 		'January',
 		'February',
@@ -26,42 +33,22 @@
 		'SAT',
 	];
 
-
-	// var events = [
-	// 	{
-	// 		dateStart: '2015-09-10',
-	// 		dateEnd: '2015-09-10',
-	// 		name: "event name",
-	// 		description: "event description",
-	// 		url: "http://someevent.org",
-	// 		img: "http://arc.arts.ualberta.ca/wp-content/themes/arc/images/arclogo_text.png"
-	// 	},
-	// 	{
-	// 		dateStart: '2015-09-12',
-	// 		dateEnd: '2015-09-13',
-	// 		name: "event name two",
-	// 		description: "event description two",
-	// 		url: "http://slashdot.org"
-	// 	},
-
-	// ];
-	var calendarDate = new Date();
-	var currentMonth;
-	var currentYear;
-	var currentDayName = 0;
-	var currentDayEntryId = 0;
 	var calendarTemplate =
 		'<div class="awl-calendar-container">' +
 			// controls
 			'<div id="awl-calendar-header">'+
 				'<div id="awl-calendar-month-container">'+
-					'<div id="awl-calendar-month-prev"><button class="btn btn-default"><div class="glyphicon glyphicon-triangle-left"></div></button></div>'+
-					'<div id="awl-calendar-month-name"></div>'+
-					'<div id="awl-calendar-month-next"><button class="btn btn-default"><div class="glyphicon glyphicon-triangle-right"></span></button></span>'+
+					'<span id="awl-calendar-month-prev">'+
+					'<span class="awl-calendar-month-button glyphicon glyphicon-triangle-left">'+
+					'</span></span>'+
+					'<span id="awl-calendar-month-name"></span>'+
+					'<span id="awl-calendar-month-next">'+
+					'<span class="awl-calendar-month-button glyphicon glyphicon-triangle-right">'+
+					'</span></span>'+
 				'</div>' +
-				'<div id="awl-calendar-year-container">'+
-					'<div id="awl-calendar-year-name"></div>'+
-				'</div>' +
+				'<span id="awl-calendar-year-container">'+
+					'<span id="awl-calendar-year-name"></span>'+
+				'</span>' +
 			'</div>' +
 			// calendar
 			'<div id="awl-calendar-body">' +
@@ -77,12 +64,13 @@
 					'</tr>' +
 					// day entries
 					(function(){
-						var result = "";
-						var currentId = 0;
+						var result = "",
+						currentId = 0;
 						for (var i=0; i<6; i++) {
 							result += '<tr>';
 							for (var j=0; j<7; j++) {
-								result += '<td class="awl-calendar-day" id="awl-calendar-'+ currentId++ +'">';
+								result += '<td class="awl-calendar-day" id="awl-calendar-'+ 
+									currentId++ +'">';
 								result += '<div class="awl-date-content">';
 								
 								result += '<div class="awl-date-content-main">';
@@ -109,9 +97,9 @@
 	// http://stackoverflow.com/questions/1184334/get-number-days-in-a-specified-month-using-javascript
 
 	// Month is 1 based
-	function daysInMonth(month, year) {
+	var daysInMonth = function(month, year) {
 		return new Date(year, month+1, 0).getDate();
-	}
+	};
 
 	var injectTemplate = function(id) {
 		$("#"+id).html(calendarTemplate);
@@ -124,8 +112,10 @@
 
 	var setCalendar = function() {
 		setCalendarDays();
-		setMonthYearNames();
+		setMonthYearNames();		
+		clearEvents();
 		highlightToday();
+		getEvents();
 	};
 
 	var setCalendarDays = function() {
@@ -134,15 +124,17 @@
 		calendarDate.setMonth(currentMonth);
 		calendarDate.setDate(1);
 
-		var totalDays = daysInMonth(currentMonth, currentYear);
-		var dayOfWeek = calendarDate.getDay();
-		var calendarDayIdBase = 'awl-calendar-';
-		var currentDay=1;
-		// $('.awl-date-content-main').html('2');
-		// Error aqui de donde metes contenido
+		var totalDays = daysInMonth(currentMonth, currentYear),
+			dayOfWeek = calendarDate.getDay(),
+			calendarDayIdBase = 'awl-calendar-',
+			currentDay = 1;
+
 		$(".awl-date-content-main").html('');
-		for (var i=dayOfWeek; currentDay<=totalDays; i++, currentDay++){			
-			$('#' + calendarDayIdBase + i + '> .awl-date-content > .awl-date-content-main').html(currentDay);
+		var id= '';
+		for (var i=dayOfWeek; currentDay<=totalDays; i++, currentDay++){
+			id = '#' + calendarDayIdBase + 
+						i + '> .awl-date-content > .awl-date-content-main';
+			$(id).html(currentDay);
 		}
 
 		// set previous month
@@ -156,27 +148,37 @@
 	};
 
 	var highlightToday = function() {
-		var date = new Date();
+		var today,
+			firstDay,
+			date = new Date();
 		// remove today class
-		$('.awl-date-content-main').removeClass("awl-calendar-today");
 		if (date.getMonth() === currentMonth && 
 				date.getFullYear() === currentYear) {
 			// set today class
 
-			var today = date.getDate();
+			today = date.getDate();
 			date.setDate(1);
-			var firstDay = date.getDay();
-
-			$('#awl-calendar-'+ (today + firstDay - 1) +' > .awl-date-content > .awl-date-content-main').addClass('awl-calendar-today');
+			firstDay = date.getDay();
+			var id = '#awl-calendar-'+ 
+							(today + firstDay - 1) + 
+							' > .awl-date-content > .awl-date-content-main';
+			$(id).addClass('awl-calendar-today');
 
 		}
 	};
 
-	var basePrevNextButtonBehaviour = function(direction, limit){
+	var clearEvents = function() {
+		$('.awl-date-content-main').removeClass("awl-calendar-today");
+		$('.awl-date-content-footer').removeClass('awl-calendar-event');
+		$('.awl-calendar-day').off('click');
+	};
+
+
+	var basePrevNextButtonBehaviour = function(direction, limit){			
+			var m = 12;
 			if (currentMonth == limit) {
 				currentYear += direction;
-			}
-			var m = 12;
+			}			
 			currentMonth = (((currentMonth+direction)%m)+m)%m;
 			setCalendar();
 	};
@@ -187,22 +189,157 @@
 		});
 		$("#awl-calendar-month-next").click(function(){
 			basePrevNextButtonBehaviour(1, 11);			
+		});		
+	};
+
+	var highlightEvent = function(index){
+		var id = '#awl-calendar-'+ index +
+			' > .awl-date-content > .awl-date-content-footer';
+		$(id).addClass('awl-calendar-event');
+	};
+
+	var getDateFromString = function(dateString) {
+		// dateString format YYYY-MM-DD
+		var dateArray = dateString.split('-'),
+			date = new Date(dateArray[0], dateArray[1]-1, dateArray[2]);
+		return date;
+	};
+
+	var getDateIndex = function(date) {
+		var firstDayWeek = new Date(date.getFullYear(), date.getMonth(), 1).getDay();
+		return firstDayWeek + date.getDate() - 1;		
+	};
+
+	var addEvent = function(currentEvent, date) {
+		var index = getDateIndex(date);
+		highlightEvent(index);		
+		if (! (index in eventList)) {
+			eventList[index] = [];
+		}
+		eventList[index].push(currentEvent);
+		setEventPopover(index, date);
+	};
+
+	var setEventPopover = function(index, date) {
+		var id = '#awl-calendar-' + index;
+		$(id).on('click', function(event) {
+			var id = $(event.target).parent().parent().attr('id');
+			var index = id.replace('awl-calendar-', '');
+			var events = eventList[index];
+			$('#' + id).popover({
+				title: "Events for " + date.toDateString() ,
+				placement: 'auto',
+				html: true,
+				content: function() {
+					return generateEventHtmlList(events);
+				}
+			});
 		});
 	};
 
-	var highlightEvent = function(){
-		$('#awl-calendar-4 > .awl-date-content > .awl-date-content-footer').addClass('awl-calendar-event');
+	var getExtraEventInfo = function(currentEvent) {
+		var needToAdd = false;
+		var result = "<ul>";
+		var startDate = getDateFromString(currentEvent._arc_start_date);
+		var endDate = getDateFromString(currentEvent._arc_end_date);
+		var eventDuration = Math.round((endDate-startDate)/(1000*60*60*24));
+
+		if (currentEvent._arc_venue && currentEvent._arc_venue !== "") {
+			needToAdd = true;
+			result += '<li>Venue: ' + currentEvent._arc_venue + '</li>';
+		}
+		
+		if (eventDuration > 1) {
+			needToAdd = true;
+			result += 
+				'<li>Event starts on ' + 
+				startDate.toDateString() + 
+				' and ends on ' + 
+				endDate.toDateString() + 
+				'</li>';								
+		}
+
+		if (needToAdd) {
+			result += '</ul>';
+			return result;
+		}
+		return '';
 	};
 
- 	awl.eventCalendar = function(id) {
- 		$(function(){
- 			injectTemplate(id);	
- 			setToday();
- 			setCalendar();
- 			setButtonBehaviour();
- 			highlightEvent();
- 			highlightToday();
- 		});
- 	};
+	var generateEventHtmlList = function(events) {
+		var result = "";
+
+		for (var i in events) {
+			var currentEvent = events[i];
+			result +=
+				'<div class="media">'+
+				'	<div class="media-left">'+
+				'		<a href="#">'+
+				'			<img class="media-object img-thumbnail awl-media-image" src="'+
+							currentEvent._arc_image_grid_img+
+							'">'+
+				'		</a>'+
+				'	</div>'+
+				'	<div class="media-body">'+
+				'		<h4 class="media-heading">'+ currentEvent.post_title +'</h4>'+
+						currentEvent.post_content +
+						getExtraEventInfo(currentEvent) +
+				'	</div>'+
+				'</div>';
+		}
+		return result;
+	};
+
+	var processIncomingEvents = function(data) {
+		var currentEvent,
+			startDate,
+			endDate,
+			currentDate,
+			totalDays = daysInMonth(currentYear, currentMonth);
+
+		eventList = {};
+
+		for (var currentDay = 1; currentDay<=totalDays; currentDay++) {
+			for (var i in data) {
+				currentEvent = data[i];
+				startDate = getDateFromString(currentEvent._arc_start_date);
+				endDate = getDateFromString(currentEvent._arc_end_date);
+				currentDate = new Date(currentYear, currentMonth, currentDay);
+				
+				if ((currentDate >= startDate && currentDate <= endDate) || 
+					(currentDate <= endDate && currentDate >= startDate)) {
+					addEvent(currentEvent, currentDate);
+				}	
+			}				
+		}
+	};
+
+	var getEvents = function() {
+		// awlAjax is set from wordpress in awl.php using wp_localize_script
+		var url = awlAjax.ajaxurl,
+		currentMonthStarting1 = ('0' + (currentMonth+1)).slice(-2),
+		data = {
+			action: 'events',
+			start_date: currentYear + '-' + 
+									currentMonthStarting1 + '-01',
+			end_date: currentYear + '-' + 
+								currentMonthStarting1 + '-' + 
+								(daysInMonth(currentYear, currentMonth) - 1),
+			category: 'Event'
+		};
+		console.log(data);
+		$.get(url, data)
+		.done(processIncomingEvents);	
+	};
+
+
+	awl.eventCalendar = function(id) {
+		$(function(){
+			injectTemplate(id);	
+			setToday();
+			setCalendar();
+			setButtonBehaviour();
+		});
+	};
 
 })(awl);

@@ -29,10 +29,14 @@ function events() {
 	global $wpdb;
 
 	$query = "
-		SELECT DISTINCT
-			posts.*, 
-			startmeta.meta_value AS start_value,
-			endmeta.meta_value AS end_value
+		SELECT DISTINCT			
+			posts.post_title,
+			posts.post_content,
+			posts.guid,
+			startmeta.meta_value AS start_date,
+			endmeta.meta_value AS end_date,
+			imagemeta.meta_value AS image,
+			venuemeta.meta_value AS venue
 		FROM 
 			$wpdb->posts posts, 
 			$wpdb->postmeta startmeta		
@@ -40,6 +44,14 @@ function events() {
 			$wpdb->postmeta endmeta
 			ON endmeta.post_id = startmeta.post_id
 			AND endmeta.meta_key = '_arc_end_date'
+		INNER JOIN 
+			$wpdb->postmeta imagemeta
+			ON imagemeta.post_id = startmeta.post_id
+			AND imagemeta.meta_key = '_arc_image_grid_img'
+		INNER JOIN 
+			$wpdb->postmeta venuemeta
+			ON venuemeta.post_id = startmeta.post_id
+			AND venuemeta.meta_key = '_arc_venue'		
 		INNER JOIN
 			$wpdb->term_relationships term_relationships
 			ON term_relationships.object_id = startmeta.post_id
