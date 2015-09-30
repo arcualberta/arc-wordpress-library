@@ -206,8 +206,8 @@
 	};
 
 	var getDateIndex = function(date) {
-		var firstDayWeek = new Date(date.getFullYear(), date.getMonth(), 1).getDay();
-		return firstDayWeek + date.getDate() - 1;		
+		var firstDay = new Date(date.getFullYear(), date.getMonth(), 1).getDay();
+		return firstDay + date.getDate() - 1;		
 	};
 
 	var addEvent = function(currentEvent, date) {
@@ -331,7 +331,6 @@
 		$.get(url, data)
 		.done(processIncomingEvents);	
 	};
-
 
 	awl.eventCalendar = function(id) {
 		$(function(){
