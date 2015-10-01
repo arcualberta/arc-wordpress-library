@@ -38,21 +38,18 @@
 			// controls
 			'<div id="awl-calendar-header">'+
 				'<div id="awl-calendar-month-container">'+
-					'<span id="awl-calendar-month-prev">'+
-					'<span class="awl-calendar-month-button glyphicon glyphicon-triangle-left">'+
-					'</span></span>'+
-					'<span id="awl-calendar-month-name"></span>'+
-					'<span id="awl-calendar-month-next">'+
-					'<span class="awl-calendar-month-button glyphicon glyphicon-triangle-right">'+
-					'</span></span>'+
+					'<div id="awl-calendar-month-prev" class="awl-calendar-month-button glyphicon glyphicon-triangle-left">'+
+					'</div>'+
+					'<div id="awl-calendar-month-name"></div>'+
+					'<div id="awl-calendar-month-next" class="awl-calendar-month-button glyphicon glyphicon-triangle-right">'+
+					'</div>'+
 				'</div>' +
-				'<span id="awl-calendar-year-container">'+
-					'<span id="awl-calendar-year-name"></span>'+
-				'</span>' +
+				'<div id="awl-calendar-year-name">'+
+				'</div>' +
 			'</div>' +
 			// calendar
 			'<div id="awl-calendar-body">' +
-				'<table>' +
+				'<table id="awl-calendar-table">' +
 					'<tr>' +
 						(function(){
 							var result = "";
@@ -67,7 +64,7 @@
 						var result = "",
 						currentId = 0;
 						for (var i=0; i<6; i++) {
-							result += '<tr>';
+							result += '<tr class="awl-calendar-row">';
 							for (var j=0; j<7; j++) {
 								result += '<td class="awl-calendar-day" id="awl-calendar-'+ 
 									currentId++ +'">';
@@ -140,6 +137,17 @@
 		// set previous month
 		// set next month
 
+		addCalendarDottedLines(dayOfWeek, totalDays);
+	};
+
+	var addCalendarDottedLines = function(dayOfWeek, totalDays) {
+		$('.awl-calendar-row').addClass('awl-calendar-bottom-row-dashed');
+		$('.awl-calendar-row').last().removeClass('awl-calendar-bottom-row-dashed');	
+
+		// console.log(dayOfWeek + totalDays);
+		// // if (!(dayOfWeek + totalDays >= 36)) {
+		// 	$('awl-calendar-table tr').eq(-2).removeClass('awl-calendar-bottom-row-dashed');
+		// // }
 	};
 
 	var setMonthYearNames = function() {
@@ -222,19 +230,30 @@
 
 	var setEventPopover = function(index, date) {
 		var id = '#awl-calendar-' + index;
+		var events = eventList[index];			
+		$(id).popover({				
+			title: "Events for " + 
+						date.toDateString() + 
+						"<button class='btn btn-danger btn-xs awl-close-popover pull-right'>"+
+						"<span class='glyphicon glyphicon-remove'></span></button>",
+			placement: 'auto',
+			selector: id,
+			html: true,
+			container: '.awl-calendar-container',
+			content: function() {
+				return generateEventHtmlList(events);
+			}
+		});
+
 		$(id).on('click', function(event) {
-			var id = $(event.target).parent().parent().attr('id');
-			var index = id.replace('awl-calendar-', '');
-			var events = eventList[index];
-			$('#' + id).popover({
-				title: "Events for " + date.toDateString() ,
-				placement: 'auto',
-				html: true,
-				content: function() {
-					return generateEventHtmlList(events);
-				}
+			$('.awl-calendar-day').popover('hide');
+			$(id).popover('toggle');
+			$('.awl-close-popover').click(function(){
+				$('.awl-calendar-day').popover('hide');
 			});
 		});
+
+		
 	};
 
 	var getExtraEventInfo = function(currentEvent) {
@@ -327,7 +346,6 @@
 								(daysInMonth(currentMonth, currentYear)),
 			category: 'Event'
 		};
-		console.log(data);
 		$.get(url, data)
 		.done(processIncomingEvents);	
 	};

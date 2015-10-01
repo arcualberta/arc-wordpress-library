@@ -14,6 +14,7 @@
 
 .awl-date-content-main {
 	height: 25px;
+	margin-top: 10px;
 }
 
 .awl-date-content-footer {
@@ -33,12 +34,15 @@
 }
 
 #awl-calendar-month-name {
-	width: 200px;
+	width: 70px;
 	color: #70A5AC;
+	float: left;
+	text-align: center;
 }
 
-#awl-calendar-year-container {
-	width: 100px;
+#awl-calendar-year-name {
+	float: right;
+	margin-right: 10px;
 }
 
 #awl-calendar-header {
@@ -51,11 +55,17 @@
 
 .awl-calendar-month-button {
 	color: #E8E3D7;
+	float: left;
 }
 
 .awl-media-image {
 	max-height: 100px;
 	max-width: 100px;
+}
+
+.awl-calendar-bottom-row-dashed {
+	border-bottom-style: dashed;
+	border-width: 1px
 }
 
 /* Bootstrap modifications */
