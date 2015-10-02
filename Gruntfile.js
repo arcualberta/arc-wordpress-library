@@ -21,7 +21,8 @@ module.exports = function(grunt) {
         files: [
           {expand: true, cwd: 'src/php/', src: ['*'], dest: 'dist/'},
           {expand: true, cwd: 'vendor/js/', src: ['bootstrap.min.js', 'jquery.min.js'], dest: 'dist/js/'},
-          {expand: true, cwd: 'vendor/css/', src: ['bootstrap.min.css'], dest: 'dist/css/'}
+          {expand: true, cwd: 'vendor/css/', src: ['bootstrap.min.css'], dest: 'dist/css/'},
+          {expand: true, cwd: 'vendor/fonts/', src: ['*'], dest: 'dist/fonts/'}
         ]
       }
     },

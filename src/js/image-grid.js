@@ -17,18 +17,17 @@
         this.timer = null;
         
 
-        this.grids = {};
-        this.grids[id] = this;
+        ArcImageGrid.grids[id] = this;
 
         var button = document.getElementById(this.id + "_left");
         button.onclick = function () {
-            var _this = this.grids[id];
+            var _this = ArcImageGrid.grids[id];
             _this.turnPage(-_this.pagesPerGrid);
         };
 
         button = document.getElementById(this.id + "_right");
         button.onclick = function () {
-            var _this = this.grids[id];
+            var _this = ArcImageGrid.grids[id];
             _this.turnPage(_this.pagesPerGrid);
         };
         
@@ -38,6 +37,8 @@
 
         this.resize();
     };
+
+    ArcImageGrid.grids = {};
 
     ArcImageGrid.prototype.getContent = function (imageId) {
         var match;
