@@ -10,9 +10,10 @@
 	width: 35px;
 	height: 25px;
 	text-align: center;
+	margin: 10px 10px 10px 10px;
 }
 
-.awl-date-content-main {
+.awl-date-content {
 	height: 25px;
 	margin-top: 10px;
 }
@@ -25,30 +26,6 @@
 .awl-calendar-today {
 	background-color: #F2ABC5;
 	color: #FFF;
-}
-
-#awl-calendar-month-container {
-	width: 150px;
-}
-
-#awl-calendar-month-name {
-	width: 70px;
-	color: #70A5AC;
-	float: left;
-	text-align: center;
-}
-
-#awl-calendar-year-name {
-	float: right;
-	margin-right: 10px;
-}
-
-#awl-calendar-header {
-	margin: 5px auto 5px auto;
-}
-
-#awl-calendar-body table {
-	margin: 5px auto 5px auto;
 }
 
 .awl-calendar-month-button {
@@ -64,6 +41,30 @@
 .awl-calendar-bottom-row-dashed {
 	border-bottom-style: dashed;
 	border-width: 1px
+}
+
+.awl-calendar-month-container {
+	width: 150px;
+}
+
+.awl-calendar-month-name {
+	width: 70px;
+	color: #70A5AC;
+	float: left;
+	text-align: center;
+}
+
+.awl-calendar-year-name {
+	float: right;
+	margin-right: 10px;
+}
+
+.awl-calendar-header {
+	margin: 5px auto 5px auto;
+}
+
+.awl-calendar-body table {
+	margin: 5px auto 5px auto;
 }
 
 /* Bootstrap modifications */

@@ -6,7 +6,8 @@
 		currentDayName = 0,
 		currentDayEntryId = 0,
 		calendarDate = new Date(),
-		eventList = {};
+		eventList = {},
+		randId = Math.round(new Date().getTime() + (Math.random() * 100));
 
 	var monthNames = [
 		'January',
@@ -33,28 +34,39 @@
 		'SAT',
 	];
 
+	var getRandId = function(id) {
+		return id + '-' + randId;
+	};
+
 	var calendarTemplate =
 		'<div class="awl-calendar-container">' +
 			// controls
-			'<div id="awl-calendar-header">'+
-				'<div id="awl-calendar-month-container">'+
-					'<div id="awl-calendar-month-prev" class="awl-calendar-month-button glyphicon glyphicon-triangle-left">'+
+			'<div class="awl-calendar-header">'+
+				'<div class="awl-calendar-month-container">'+
+					'<div id='+getRandId('awl-calendar-month-prev')+' '+
+						'class="awl-calendar-month-button '+
+							'glyphicon glyphicon-triangle-left">'+
 					'</div>'+
-					'<div id="awl-calendar-month-name"></div>'+
-					'<div id="awl-calendar-month-next" class="awl-calendar-month-button glyphicon glyphicon-triangle-right">'+
+					'<div class="awl-calendar-month-name"'+
+						' id="'+getRandId('awl-calendar-month-name')+'"></div>'+
+					'<div id="'+getRandId('awl-calendar-month-next')+'" '+
+						'class="awl-calendar-month-button '+
+							'glyphicon glyphicon-triangle-right">'+
 					'</div>'+
 				'</div>' +
-				'<div id="awl-calendar-year-name">'+
+				'<div class="awl-calendar-year-name" id="'+
+					getRandId('awl-calendar-year-name')+'">'+
 				'</div>' +
 			'</div>' +
 			// calendar
-			'<div id="awl-calendar-body">' +
-				'<table id="awl-calendar-table">' +
+			'<div class="awl-calendar-body">' +
+				'<table id="'+getRandId('awl-calendar-table')+'">' +
 					'<tr>' +
 						(function(){
 							var result = "";
 							for (var i=0;i<dayNames.length;i++) {
-								result += '<th>' + dayNames[i] + '</th>';
+								result += '<th class="awl-calendar-day">' +
+									dayNames[i] + '</th>';
 							}
 							return result;
 						})() +
@@ -66,18 +78,11 @@
 						for (var i=0; i<6; i++) {
 							result += '<tr class="awl-calendar-row">';
 							for (var j=0; j<7; j++) {
-								result += '<td class="awl-calendar-day" id="awl-calendar-'+ 
+								result += '<td class="awl-calendar-day" '+
+									'id="'+ getRandId('awl-calendar-') + 
 									currentId++ +'">';
-								result += '<div class="awl-date-content">';
-								
-								result += '<div class="awl-date-content-main">';
-								// result += currentId;
-								result += '</div>';
-								
-								// result += '<div class="awl-date-content-footer">';
-								// result += '</div>';
-								
-								result += '</div>';
+								result += '<div class="awl-date-content">';								
+								result += '</div>';				
 								result += '</td>';
 							}
 							result += '</tr>';
@@ -121,16 +126,16 @@
 		calendarDate.setMonth(currentMonth);
 		calendarDate.setDate(1);
 
-		var totalDays = daysInMonth(currentMonth, currentYear),
+		var currentDay = 1,
+			totalDays = daysInMonth(currentMonth, currentYear),
 			dayOfWeek = calendarDate.getDay(),
-			calendarDayIdBase = 'awl-calendar-',
-			currentDay = 1;
+			calendarDayIdBase = getRandId('awl-calendar-');
+			
 
-		$(".awl-date-content-main").html('');
+		$(".awl-date-content").html('');
 		var id= '';
 		for (var i=dayOfWeek; currentDay<=totalDays; i++, currentDay++){
-			id = '#' + calendarDayIdBase + 
-						i + '> .awl-date-content > .awl-date-content-main';
+			id = '#' + calendarDayIdBase + i + '> .awl-date-content';
 			$(id).html(currentDay);
 		}
 
@@ -144,17 +149,15 @@
 		$('.awl-calendar-row').addClass('awl-calendar-bottom-row-dashed');
 		$('.awl-calendar-row').last().removeClass('awl-calendar-bottom-row-dashed');	
 
-
-
-		// console.log(dayOfWeek + totalDays);
-		if (!(dayOfWeek + totalDays >= 36)) {
-			$('#awl-calendar-table tr').eq(-2).removeClass('awl-calendar-bottom-row-dashed');
+		if (dayOfWeek + totalDays < 36) {
+			$(getRandId('#awl-calendar-table') + ' tr').eq(-2)
+			.removeClass('awl-calendar-bottom-row-dashed');
 		}
 	};
 
 	var setMonthYearNames = function() {
-		$("#awl-calendar-month-name").html(monthNames[currentMonth]);
-		$("#awl-calendar-year-name").html(currentYear);
+		$(getRandId('#awl-calendar-month-name')).html(monthNames[currentMonth]);
+		$(getRandId('#awl-calendar-year-name')).html(currentYear);
 	};
 
 	var highlightToday = function() {
@@ -169,17 +172,17 @@
 			today = date.getDate();
 			date.setDate(1);
 			firstDay = date.getDay();
-			var id = '#awl-calendar-'+ 
+			var id = getRandId('#awl-calendar-')+ 
 							(today + firstDay - 1) + 
-							' > .awl-date-content > .awl-date-content-main';
+							' > .awl-date-content';
 			$(id).addClass('awl-calendar-today');
 
 		}
 	};
 
 	var clearEvents = function() {
-		$('.awl-date-content-main').removeClass("awl-calendar-today");
-		$('.awl-date-content-main').removeClass('awl-calendar-event');
+		$('.awl-date-content').removeClass("awl-calendar-today");
+		$('.awl-date-content').removeClass('awl-calendar-event');
 		$('.awl-calendar-day').off('click');
 	};
 
@@ -194,17 +197,16 @@
 	};
 
 	var setButtonBehaviour = function() {
-		$("#awl-calendar-month-prev").click(function(){
+		$(getRandId('#awl-calendar-month-prev')).click(function(){
 			basePrevNextButtonBehaviour(-1, 0);
 		});
-		$("#awl-calendar-month-next").click(function(){
+		$(getRandId('#awl-calendar-month-next')).click(function(){
 			basePrevNextButtonBehaviour(1, 11);			
 		});		
 	};
 
 	var highlightEvent = function(index){
-		var id = '#awl-calendar-'+ index +
-			' > .awl-date-content > .awl-date-content-main';
+		var id = getRandId('#awl-calendar-') + index + ' > .awl-date-content';
 		$(id).addClass('awl-calendar-event');
 	};
 
@@ -225,19 +227,20 @@
 		highlightEvent(index);		
 		if (! (index in eventList)) {
 			eventList[index] = [];
+			setEventPopover(index, date);
 		}
 		eventList[index].push(currentEvent);
-		setEventPopover(index, date);
+		
 	};
 
-	var setEventPopover = function(index, date) {
-		var id = '#awl-calendar-' + index;
-		var events = eventList[index];			
-		$(id).popover({				
-			title: "Events for " + 
-						date.toDateString() + 
-						"<button class='btn btn-danger btn-xs awl-close-popover pull-right'>"+
-						"<span class='glyphicon glyphicon-remove'></span></button>",
+	var getEventPopoverOptions = function(index, date, id) {
+		var events = eventList[index];
+		var options = {
+			title: 
+				"Events for " + 
+				date.toDateString() + 
+				"<button class='btn btn-danger btn-xs awl-close-popover pull-right'>"+
+				"<span class='glyphicon glyphicon-remove'></span></button>",
 			placement: 'auto',
 			selector: id,
 			html: true,
@@ -245,7 +248,15 @@
 			content: function() {
 				return generateEventHtmlList(events);
 			}
-		});
+		};
+		return options;
+	};
+
+	var setEventPopover = function(index, date) {
+		var id = getRandId('#awl-calendar-') + index;
+		var popoverOptions = getEventPopoverOptions(index, date, id);
+
+		$(id).popover(popoverOptions);
 
 		$(id).on('click', function(event) {
 			$('.awl-calendar-day').popover('hide');
@@ -254,8 +265,6 @@
 				$('.awl-calendar-day').popover('hide');
 			});
 		});
-
-		
 	};
 
 	var getExtraEventInfo = function(currentEvent) {
@@ -273,10 +282,8 @@
 		if (eventDuration > 1) {
 			needToAdd = true;
 			result += 
-				'<li>Event starts on ' + 
-				startDate.toDateString() + 
-				' and ends on ' + 
-				endDate.toDateString() + 
+				'<li>Event starts on ' + startDate.toDateString() + 
+				' and ends on ' + endDate.toDateString() + 
 				'</li>';								
 		}
 
@@ -302,7 +309,11 @@
 				'		</a>'+
 				'	</div>'+
 				'	<div class="media-body">'+
-				'		<h4 class="media-heading">'+ currentEvent.post_title +'</h4>'+
+				'		<h4 class="media-heading">'+ 
+				'			<a href="' + currentEvent.guid + '"">'+
+								currentEvent.post_title+
+				'			</a>'				+
+				'</h4>'+
 						currentEvent.post_content +
 						getExtraEventInfo(currentEvent) +
 				'	</div>'+
