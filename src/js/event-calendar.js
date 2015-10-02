@@ -74,8 +74,8 @@
 								// result += currentId;
 								result += '</div>';
 								
-								result += '<div class="awl-date-content-footer">';
-								result += '</div>';
+								// result += '<div class="awl-date-content-footer">';
+								// result += '</div>';
 								
 								result += '</div>';
 								result += '</td>';
@@ -144,10 +144,12 @@
 		$('.awl-calendar-row').addClass('awl-calendar-bottom-row-dashed');
 		$('.awl-calendar-row').last().removeClass('awl-calendar-bottom-row-dashed');	
 
+
+
 		// console.log(dayOfWeek + totalDays);
-		// // if (!(dayOfWeek + totalDays >= 36)) {
-		// 	$('awl-calendar-table tr').eq(-2).removeClass('awl-calendar-bottom-row-dashed');
-		// // }
+		if (!(dayOfWeek + totalDays >= 36)) {
+			$('#awl-calendar-table tr').eq(-2).removeClass('awl-calendar-bottom-row-dashed');
+		}
 	};
 
 	var setMonthYearNames = function() {
@@ -177,7 +179,7 @@
 
 	var clearEvents = function() {
 		$('.awl-date-content-main').removeClass("awl-calendar-today");
-		$('.awl-date-content-footer').removeClass('awl-calendar-event');
+		$('.awl-date-content-main').removeClass('awl-calendar-event');
 		$('.awl-calendar-day').off('click');
 	};
 
@@ -202,7 +204,7 @@
 
 	var highlightEvent = function(index){
 		var id = '#awl-calendar-'+ index +
-			' > .awl-date-content > .awl-date-content-footer';
+			' > .awl-date-content > .awl-date-content-main';
 		$(id).addClass('awl-calendar-event');
 	};
 
