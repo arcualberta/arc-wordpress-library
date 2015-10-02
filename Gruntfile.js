@@ -19,7 +19,9 @@ module.exports = function(grunt) {
     copy: {
       main: {
         files: [
-          {expand: true, cwd: 'src/php/', src: ['*'], dest: 'dist/'}
+          {expand: true, cwd: 'src/php/', src: ['*'], dest: 'dist/'},
+          {expand: true, cwd: 'vendor/js/', src: ['bootstrap.min.js', 'jquery.min.js'], dest: 'dist/js/'},
+          {expand: true, cwd: 'vendor/css/', src: ['bootstrap.min.css'], dest: 'dist/css/'}
         ]
       }
     },
