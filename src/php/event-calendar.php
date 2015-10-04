@@ -33,10 +33,10 @@ function events() {
 			posts.post_title,
 			posts.post_content,
 			posts.guid,
-			startmeta.meta_value AS start_date,
-			endmeta.meta_value AS end_date,
-			imagemeta.meta_value AS image,
-			venuemeta.meta_value AS venue
+			startmeta.meta_value AS _arc_start_date,
+			endmeta.meta_value AS _arc_end_date,
+			imagemeta.meta_value AS _arc_image_grid_img,
+			venuemeta.meta_value AS _arc_venue
 		FROM 
 			$wpdb->posts posts, 
 			$wpdb->postmeta startmeta		
