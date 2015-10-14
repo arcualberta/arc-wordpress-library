@@ -17,6 +17,7 @@ class ARCPostCell {
     public $post_type = 'post';
     public $url = '#';
     public $metadata = array();
+    public $excerpt = '';
     
     function get_post(){
         $post = get_post($this->id);

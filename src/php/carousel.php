@@ -1,4 +1,5 @@
 <?php
+namespace Awl;
 defined('ABSPATH') or die('No');
 $arc_carousel_array = array();
 
@@ -50,14 +51,14 @@ function arc_image_carousel_by_grid_name($id, $gridName){
     global $arc_carousel_array;
     $arc_carousel_array = array();
     
-    arc_image_grid_get_entries($gridName, 'arc_carousel_array_push');
-    arc_image_carousel($id, $arc_carousel_array, '{$data->metadata["_arc_image_grid_img"]}', '$data->name', 'TODO: Obtain page data');
+    arc_image_grid_get_entries($gridName, 'Awl\arc_carousel_array_push');
+    arc_image_carousel($id, $arc_carousel_array, '{$data->metadata["_arc_image_grid_img"]}', '$data->name', '$data->excerpt');
 }
 
 function arc_image_carousel_by_category($id, $categoryName, $limit = 10){
     global $arc_carousel_array;
     $arc_carousel_array = array();
     
-    arc_get_posts_by_category($categoryName, 'arc_carousel_array_push', false, $limit);
-    arc_image_carousel($id, $arc_carousel_array, '{$data->metadata["_arc_image_grid_img"]}', '$data->name', 'TODO: Obtain page data');
+    arc_get_posts_by_category($categoryName, 'Awl\arc_carousel_array_push', false, $limit);
+    arc_image_carousel($id, $arc_carousel_array, '{$data->metadata["_arc_image_grid_img"]}', '$data->name', '$data->excerpt');
 }

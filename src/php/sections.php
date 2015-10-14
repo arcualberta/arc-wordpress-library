@@ -1,5 +1,5 @@
 <?php
-
+namespace Awl;
 defined('ABSPATH') or die('No');
 
 function arc_get_posts_by_category($category, $objectOutputFunction, $random = false, $limit = 100) {
@@ -7,7 +7,7 @@ function arc_get_posts_by_category($category, $objectOutputFunction, $random = f
     global $result;
 
     $query = "
-    SELECT p.ID AS ID, p.post_title AS post_title, p.post_type AS post_type, p.guid AS url, pm.meta_key AS meta_key, pm.meta_value AS meta_value
+    SELECT p.ID AS ID, p.post_title AS post_title, p.post_excerpt AS post_excerpt, p.post_type AS post_type, p.guid AS url, pm.meta_key AS meta_key, pm.meta_value AS meta_value
     FROM $wpdb->posts p LEFT JOIN $wpdb->postmeta pm ON p.ID = pm.post_id
     WHERE p.ID IN (SELECT tr.object_id
                     FROM $wpdb->terms t JOIN $wpdb->term_taxonomy tt ON t.term_id = tt.term_id JOIN $wpdb->term_relationships tr ON tt.term_taxonomy_id = tr.term_taxonomy_id
@@ -40,11 +40,12 @@ function arc_get_posts_by_category($category, $objectOutputFunction, $random = f
                 break;
             }
 
-            $currentObj = new ARCPostCell;
+            $currentObj = new \ARCPostCell;
             $currentObj->id = $result->ID;
             $currentObj->name = $result->post_title;
             $currentObj->post_type = $result->post_type;
             $currentObj->url = $result->url;
+            $currentObj->excerpt = $result->post_excerpt;
             $currentId = $result->ID;
         }
 
@@ -100,6 +101,6 @@ function arc_section_by_category($id, $categoryName, $isVertical = true, $classe
     global $arc_carousel_array;
     $arc_carousel_array = array();
     
-    arc_get_posts_by_category($categoryName, 'arc_carousel_array_push', false, $limit);
+    arc_get_posts_by_category($categoryName, 'Awl\arc_carousel_array_push', false, $limit);
     arc_create_section($id, $arc_carousel_array, '{$data->metadata["_arc_image_grid_img"]}', '$data->name', '{$data->get_post()->post_content}', '$data->url', $classes, $isVertical);
 }

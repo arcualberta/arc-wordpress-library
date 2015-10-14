@@ -1,4 +1,5 @@
 <?php
+namespace Awl;
 defined('ABSPATH') or die('No');
 
 function arc_image_grid_get_entries($name, $objectOutputFunction, $random = false, $limit = 100) {
@@ -6,7 +7,7 @@ function arc_image_grid_get_entries($name, $objectOutputFunction, $random = fals
     global $result;
 
     $query = "
-    SELECT p.ID AS ID, p.post_title AS post_title, p.post_type AS post_type, p.guid AS url, pm.meta_key AS meta_key, pm.meta_value AS meta_value
+    SELECT p.ID AS ID, p.post_title AS post_title, p.post_type AS post_type, p.post_excerpt AS post_excerpt, p.guid AS url, pm.meta_key AS meta_key, pm.meta_value AS meta_value
     FROM $wpdb->posts p, $wpdb->postmeta pm
     WHERE p.ID IN (SELECT spm.post_id 
                     FROM $wpdb->postmeta spm 
@@ -34,10 +35,11 @@ function arc_image_grid_get_entries($name, $objectOutputFunction, $random = fals
                 call_user_func($objectOutputFunction, $currentObj);
             }
 
-            $currentObj = new ARCPostCell;
+            $currentObj = new \ARCPostCell;
             $currentObj->id = $result->ID;
             $currentObj->name = $result->post_title;
             $currentObj->post_type = $result->post_type;
+            $currentObj->excerpt = $result->post_excerpt;
             $currentObj->url = $result->url;
             $currentId = $result->ID;
         }
@@ -72,7 +74,7 @@ function arc_image_grid_add_grid($name, $img_width, $img_height, $max_col_count,
             var imageList = new Array();
 
     <?php
-    arc_image_grid_get_entries($name, 'arc_image_grid_create_JS_cell', $random, $limit);
+    arc_image_grid_get_entries($name, 'Awl\arc_image_grid_create_JS_cell', $random, $limit);
     ?>
 
             new awl.imageGrid('<?php echo $id ?>', <?php echo $img_width ?>, <?php echo $img_height ?>, <?php echo $max_col_count ?>, imageList, <?php echo json_encode($content) ?>, <?php echo json_encode($button_text) ?>, <?php echo $timer_seconds ?>);
