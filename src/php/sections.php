@@ -2,6 +2,8 @@
 namespace Awl;
 defined('ABSPATH') or die('No');
 
+
+// Function arc_get_posts_by_category will be depercated and should not be used further
 function arc_get_posts_by_category($category, $objectOutputFunction, $random = false, $limit = 100) {
     global $wpdb;
     global $result;
@@ -57,6 +59,63 @@ function arc_get_posts_by_category($category, $objectOutputFunction, $random = f
     }
 }
 
+
+
+function get_posts_by_category($category = "", $limit = 100, $random = false) {
+    global $wpdb;
+
+    $query = "
+        SELECT DISTINCT         
+            posts.post_title,
+            posts.post_content,
+            posts.guid,
+            startmeta.meta_value AS _arc_start_date,
+            endmeta.meta_value AS _arc_end_date,
+            imagemeta.meta_value AS _arc_image_grid_img,
+            venuemeta.meta_value AS _arc_venue
+        FROM 
+            $wpdb->posts posts, 
+            $wpdb->postmeta startmeta       
+        INNER JOIN 
+            $wpdb->postmeta endmeta
+            ON endmeta.post_id = startmeta.post_id
+            AND endmeta.meta_key = '_arc_end_date'
+        INNER JOIN 
+            $wpdb->postmeta imagemeta
+            ON imagemeta.post_id = startmeta.post_id
+            AND imagemeta.meta_key = '_arc_image_grid_img'
+        INNER JOIN 
+            $wpdb->postmeta venuemeta
+            ON venuemeta.post_id = startmeta.post_id
+            AND venuemeta.meta_key = '_arc_venue'       
+        INNER JOIN
+            $wpdb->term_relationships term_relationships
+            ON term_relationships.object_id = startmeta.post_id
+        INNER JOIN
+            $wpdb->term_taxonomy term_taxonomy
+            ON term_taxonomy.term_taxonomy_id = term_relationships.term_taxonomy_id
+        INNER JOIN
+            $wpdb->terms terms
+            ON terms.term_id = term_taxonomy.term_id
+        WHERE
+            posts.post_status = 'publish'
+            AND posts.post_type = 'post'
+            AND startmeta.meta_key = '_arc_start_date'
+            AND posts.ID = startmeta.post_id
+            AND terms.name = '" . $category . "' ";
+            
+
+        if ($random) {
+            $query .= "ORDER BY " . rand() . " ^ ID "; // An exclusive or is used with a rand to keep meta-data grouped together.
+        } else {
+            $query .= "ORDER BY ID, post_date DESC ";
+        }
+
+        $query .= "LIMIT ".$limit.";";
+
+    return $wpdb->get_results($query);
+}
+
 function arc_limit_content($data, $contentPath, $contentLimit, $breakChar = ".", $padding = "..."){
     $result = arc_convert_content($contentPath, $data);
     //$result = preg_replace("/<[^(p|br|h1|h2|h3|h4)][^>]*\>/i", "", $result); 
@@ -103,4 +162,8 @@ function arc_section_by_category($id, $categoryName, $isVertical = true, $classe
     
     arc_get_posts_by_category($categoryName, 'Awl\arc_carousel_array_push', false, $limit);
     arc_create_section($id, $arc_carousel_array, '{$data->metadata["_arc_image_grid_img"]}', '$data->name', '{$data->get_post()->post_content}', '$data->url', $classes, $isVertical);
+}
+
+function get_posts_by_categoty() {
+
 }
