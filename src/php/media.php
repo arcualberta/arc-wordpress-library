@@ -22,6 +22,9 @@ function get_title_desc_media($args) {
 	if (!array_key_exists('container_class', $args)) {
 		$args['container_class'] = '';
 	}
+		if (!array_key_exists('post_class', $args)) {
+		$args['post_class'] = '';
+	}
 	if (!array_key_exists('image_class', $args)) {
 		$args['image_class'] = '';
 	}
@@ -36,6 +39,7 @@ function get_title_desc_media($args) {
 
 	foreach ($args['data'] as $post) {
 		$result .= "<div id='".$args['container_id']."' class='".$args['container_class']."'>";
+		$result .= 	"<div class='".$args['post_class']."'>";
 		$result .= 	"<div class='".$args['image_class']."' style='background: url(\"".$post->_arc_image_grid_img."\")'>";
 		$result .= 	"</div>";
 		$result .= 	"<div>";
@@ -48,6 +52,7 @@ function get_title_desc_media($args) {
 		$result .= 		"<div>";
 		$result .= 			"<a href='".$post->guid."'>More</a>";
 		$result .= 		"</div>";
+		$result .= 	"</div>";
 		$result .= 	"</div>";
 		$result .= "</div>";
 	}
