@@ -60,7 +60,7 @@ function arc_get_posts_by_category($category, $objectOutputFunction, $random = f
 }
 
 
-// @mpm1 Should this function return an array of ARCPostCell ?
+
 function get_posts_by_category($category = "", $limit = 100, $random = false) {
     global $wpdb;
 

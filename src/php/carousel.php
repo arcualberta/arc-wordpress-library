@@ -62,3 +62,86 @@ function arc_image_carousel_by_category($id, $categoryName, $limit = 10){
     arc_get_posts_by_category($categoryName, 'Awl\arc_carousel_array_push', false, $limit);
     arc_image_carousel($id, $arc_carousel_array, '{$data->metadata["_arc_image_grid_img"]}', '$data->name', '$data->excerpt');
 }
+
+function generate_carousel($args) {
+    $result = "";
+
+    if (!array_key_exists("data", $args)) {
+        return $result;
+    }
+    if (!array_key_exists("carousel_id", $args)) {
+        $args['carousel_id'] = '';
+    }
+
+    // add start of carousel
+    $result .= '<div id="'.$args['carousel_id'].'" class="carousel slide" data-ride="carousel">';
+    
+    // add indicators
+
+    $result .= '<ol class="carousel-indicators">';
+
+    $post_count = count($args['data']);
+
+    if ($post_count > 0) {
+        $result .= '<li data-target="#'.$args['carousel_id'].'" data-slide-to="0" class="active"></li>';    
+        for ($i=1; $i<post_count; ++$i) {
+            $result .= '<li data-target="#'.$args['carousel_id'].'" data-slide-to="'.$i.'"></li>';    
+        }
+    }
+    $result .= '</ol>';
+
+
+
+    // add slides
+    if ($post_count > 0) {
+        $result .= '<div class="carousel-inner" role="listbox">';
+        
+        // 0
+        $result .= '<div class="item active">';
+        $result .= $args['process_slide']($args['data'][0]);
+        $result .= '</div>';
+        // rest
+        for ($i=1; $i<post_count; ++$i) {
+            $result .= '<div class="item">';
+            $result .= $args['process_slide']($args['data'][i]);
+            $result .= '</div>';
+        }
+
+        $result .= '</div';
+    }
+
+    // add controls and end
+
+    $result .= '<a class="left carousel-control" href="'.$args['carousel_id'].'" role="button" data-slide="prev">';
+    $result .= '<span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>';
+    $result .= '<span class="sr-only">Previous</span>';
+    $result .= '</a>';
+    $result .= '<a class="right carousel-control" href="'.$args['carousel_id'].'" role="button" data-slide="next">';
+    $result .= '<span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>';
+    $result .= '<span class="sr-only">Next</span>';
+    $result .= '</a>';
+    $result .= '</div>';
+
+
+    return $result;
+}
+
+function generate_media_content($data) {
+    return "processed_slide" . $data;
+}
+
+function get_media_carousel($args) {
+    
+
+    if (!array_key_exists("data", $args)) {
+        return '';
+    }
+
+    $args['process_slide'] = function($args) {
+        return generate_media_content($args);
+    };
+
+    $result = generate_carousel($args);
+
+    return $result;
+}
