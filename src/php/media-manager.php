@@ -34,28 +34,32 @@ function get_title_desc_media($args) {
 	if (!array_key_exists('content_class', $args)) {
 		$args['content_class'] = '';
 	}
+	if (!array_key_exists('text_class', $args)) {
+		$args['text_class'] = '';
+	}
 
 
+	$result .= "<div id='".$args['container_id']."' class='".$args['container_class']."'>";
 
-	foreach ($args['data'] as $post) {
-		$result .= "<div id='".$args['container_id']."' class='".$args['container_class']."'>";
+	foreach ($args['data'] as $post) {		
 		$result .= 	"<div class='".$args['post_class']."'>";
-		$result .= 	"<div class='".$args['image_class']."' style='background: url(\"".$post->_arc_image_grid_img."\")'>";
+		$result .= 	"<div style='background: url(\"".$post->_arc_image_grid_img."\")' class='".$args['image_class']."' >";
 		$result .= 	"</div>";
-		$result .= 	"<div>";
+		$result .= 	"<div class='".$args['content_class']."''>";
 		$result .= 		"<div class='".$args['title_class']."'>";
 		$result .= 			$post->post_title;
 		$result .= 		"</div>";
-		$result .= 		"<div class='".$args['content_class']."'>";
-		$result .=  		arc_limit_content("", $post->post_content, 140);
+		$result .= 		"<div class='".$args['text_class']."'>";
+		$result .=  		arc_limit_content("", $post->post_content, 50);
 		$result .= 		"</div>";
 		$result .= 		"<div>";
 		$result .= 			"<a href='".$post->guid."'>More</a>";
 		$result .= 		"</div>";
 		$result .= 	"</div>";
-		$result .= 	"</div>";
-		$result .= "</div>";
+		$result .= 	"</div>";		
 	}
+
+	$result .= "</div>";
 
 	return $result;
 }
