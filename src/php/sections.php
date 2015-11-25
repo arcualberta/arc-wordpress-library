@@ -108,7 +108,7 @@ function get_posts_by_category($category = "", $limit = 100, $random = false) {
         if ($random) {
             $query .= "ORDER BY " . rand() . " ^ ID "; // An exclusive or is used with a rand to keep meta-data grouped together.
         } else {
-            $query .= "ORDER BY ID, post_date DESC ";
+            $query .= "ORDER BY ID DESC, post_date DESC ";
         }
 
         $query .= "LIMIT ".$limit.";";

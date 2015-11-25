@@ -84,7 +84,7 @@ function generate_carousel($args) {
 
     if ($post_count > 0) {
         $result .= '<li data-target="#'.$args['carousel_id'].'" data-slide-to="0" class="active"></li>';    
-        for ($i=1; $i<post_count; ++$i) {
+        for ($i=1; $i<$post_count; ++$i) {
             $result .= '<li data-target="#'.$args['carousel_id'].'" data-slide-to="'.$i.'"></li>';    
         }
     }
@@ -98,25 +98,25 @@ function generate_carousel($args) {
         
         // 0
         $result .= '<div class="item active">';
-        $result .= $args['process_slide']($args['data'][0]);
+        $result .= $args['process_slide']($args, 0);
         $result .= '</div>';
         // rest
-        for ($i=1; $i<post_count; ++$i) {
+        for ($i=1; $i<$post_count; ++$i) {
             $result .= '<div class="item">';
-            $result .= $args['process_slide']($args['data'][i]);
+            $result .= $args['process_slide']($args, $i);
             $result .= '</div>';
         }
 
-        $result .= '</div';
+        $result .= '</div>';
     }
 
     // add controls and end
 
-    $result .= '<a class="left carousel-control" href="'.$args['carousel_id'].'" role="button" data-slide="prev">';
+    $result .= '<a class="left carousel-control" href="#'.$args['carousel_id'].'" role="button" data-slide="prev">';
     $result .= '<span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>';
     $result .= '<span class="sr-only">Previous</span>';
     $result .= '</a>';
-    $result .= '<a class="right carousel-control" href="'.$args['carousel_id'].'" role="button" data-slide="next">';
+    $result .= '<a class="right carousel-control" href="#'.$args['carousel_id'].'" role="button" data-slide="next">';
     $result .= '<span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>';
     $result .= '<span class="sr-only">Next</span>';
     $result .= '</a>';
@@ -126,9 +126,33 @@ function generate_carousel($args) {
     return $result;
 }
 
-function generate_media_content($data) {
-    return "processed_slide" . $data;
+function generate_media_content($args, $i) {
+
+    $data = $args['data'][$i];
+    $media_class = $args['media_class'];
+    $media_container = $args['media_container'];
+
+    $result = '';
+    $result .= '<div class="media '.$media_container.'">';
+    $result .= '<div class="media-left">';    
+    // $result .= "<div style='width: 200px; height: 200px; background-image: url(\"".$data->_arc_image_grid_img."\");'></div>";
+    $result .= "<div class='".$media_class."' style='background-image: url(\"".$data->_arc_image_grid_img."\");'></div>";
+    $result .= '</div>';
+    $result .= '<div class="media-body">';
+    $result .= '<h4 class="media-heading"><a href="'.$data->guid.'">'.$data->post_title.'</a></h4>';
+    $result .= '<div>'.$data->post_content.'</div>';
+    $result .= '</div>';
+    $result .= '</div>';
+
+    return $result;
+
 }
+
+
+// args:
+// data
+// carousel_id
+// media_class
 
 function get_media_carousel($args) {
     
@@ -137,8 +161,20 @@ function get_media_carousel($args) {
         return '';
     }
 
-    $args['process_slide'] = function($args) {
-        return generate_media_content($args);
+    if (!array_key_exists("carousel_id", $args)) {
+        $args['carousel_id'] = '';
+    }
+    if (!array_key_exists("media_class", $args)) {
+        $args['media_class'] = '';
+    }
+        if (!array_key_exists("media_container", $args)) {
+        $args['media_container'] = '';
+    }
+
+
+
+    $args['process_slide'] = function($args, $i) {
+        return generate_media_content($args, $i);
     };
 
     $result = generate_carousel($args);
