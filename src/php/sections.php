@@ -73,6 +73,7 @@ function get_posts_by_category($category = "", $limit = 100, $random = false) {
             endmeta.meta_value AS _arc_end_date,
             imagemeta.meta_value AS _arc_image_grid_img,
             venuemeta.meta_value AS _arc_venue
+            descriptionmeta.meta_value AS _arc_description
         FROM 
             $wpdb->posts posts, 
             $wpdb->postmeta startmeta       
@@ -88,6 +89,10 @@ function get_posts_by_category($category = "", $limit = 100, $random = false) {
             $wpdb->postmeta venuemeta
             ON venuemeta.post_id = startmeta.post_id
             AND venuemeta.meta_key = '_arc_venue'       
+        INNER JOIN 
+            $wpdb->postmeta descriptionmeta
+            ON descriptionmeta.post_id = startmeta.post_id
+            AND descriptionmeta.meta_key = '_arc_description'
         INNER JOIN
             $wpdb->term_relationships term_relationships
             ON term_relationships.object_id = startmeta.post_id
