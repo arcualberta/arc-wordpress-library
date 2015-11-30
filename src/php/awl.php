@@ -109,9 +109,12 @@ function arc_meta_box_callback($post) {
     wp_nonce_field('arc_meta_box_save', 'arc_meta_box_nonce');;
     
     arc_meta_box_add_field($post, '_arc_image_grid_img', 'Image', 'image');
-    echo '<br/>';
+    echo '<br/>';    
     
     arc_meta_box_add_field($post, '_arc_image_grid_name', 'Grid Name', 'text');
+    echo '<br/>';
+
+    arc_meta_box_add_field($post, '_arc_description', 'Description', 'textarea');
     echo '<br/>';
     
     echo '<br><h3>Event Details</h3>';
