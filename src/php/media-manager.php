@@ -50,7 +50,8 @@ function get_title_desc_media($args) {
 		$result .= 			$post->post_title;
 		$result .= 		"</div>";
 		$result .= 		"<div class='".$args['text_class']."'>";
-		$result .=  		arc_limit_content("", $post->post_content, 50);
+		// $result .=  		arc_limit_content("", $post->post_content, 50);
+		$result .=		$post->_arc_description;
 		$result .= 		"</div>";
 		$result .= 		"<div>";
 		$result .= 			"<a href='".$post->guid."'>More</a>";

@@ -200,6 +200,9 @@ function arc_meta_box_save($post_id) {
 
     $value = sanitize_text_field($_POST['_arc_image_grid_img']);
     update_post_meta($post_id, '_arc_image_grid_img', $value);
+
+    $value = sanitize_text_field($_POST['_arc_description']);
+    update_post_meta($post_id, '_arc_description', $value);
     
     $value = sanitize_text_field($_POST['_arc_start_date']);
     update_post_meta($post_id, '_arc_start_date', $value);

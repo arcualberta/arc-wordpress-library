@@ -126,12 +126,14 @@ function generate_carousel($args) {
     return $result;
 }
 
-function generate_media_content($args, $i) {
+//XXX change to remove index requirement
 
-    $data = $args['data'][$i];
+function generate_media_content($args) {
+    
+    $data = $args['data'];
     $media_class = $args['media_class'];
     $media_container = $args['media_container'];
-
+    
     $result = '';
     $result .= '<div class="media '.$media_container.'">';
     $result .= '<div class="media-left">';    
@@ -140,7 +142,15 @@ function generate_media_content($args, $i) {
     $result .= '</div>';
     $result .= '<div class="media-body">';
     $result .= '<h4 class="media-heading"><a href="'.$data->guid.'">'.$data->post_title.'</a></h4>';
-    $result .= '<div>'.$data->post_content.'</div>';
+    $result .= '<div>';
+    if (empty($data->_arc_description)) {
+        // substitute for excerpt ?
+        $result .= arc_limit_content("", $data->post_content, 500);
+    } else {
+        $result .= $data->_arc_description;
+    }
+    // $data->_arc_description.
+    $result .= '</div>';
     $result .= '</div>';
     $result .= '</div>';
 
@@ -174,6 +184,7 @@ function get_media_carousel($args) {
 
 
     $args['process_slide'] = function($args, $i) {
+        $args['data'] = $args['data'][$i];
         return generate_media_content($args, $i);
     };
 
