@@ -1,7 +1,8 @@
 <?php
-namespace Awl;
-defined('ABSPATH') or die('No');
 
+namespace Awl;
+
+defined('ABSPATH') or die('No');
 
 // Function arc_get_posts_by_category will be depercated and should not be used further
 function arc_get_posts_by_category($category, $objectOutputFunction, $random = false, $limit = 100) {
@@ -59,8 +60,6 @@ function arc_get_posts_by_category($category, $objectOutputFunction, $random = f
     }
 }
 
-
-
 function get_posts_by_category($category = "", $limit = 100, $random = false) {
     global $wpdb;
 
@@ -108,67 +107,71 @@ function get_posts_by_category($category = "", $limit = 100, $random = false) {
             AND startmeta.meta_key = '_arc_start_date'
             AND posts.ID = startmeta.post_id
             AND terms.name = '" . $category . "' ";
-            
 
-        if ($random) {
-            $query .= "ORDER BY " . rand() . " ^ ID "; // An exclusive or is used with a rand to keep meta-data grouped together.
-        } else {
-            $query .= "ORDER BY ID DESC, post_date DESC ";
-        }
 
-        $query .= "LIMIT ".$limit.";";
+    if ($random) {
+        $query .= "ORDER BY " . rand() . " ^ ID "; // An exclusive or is used with a rand to keep meta-data grouped together.
+    } else {
+        $query .= "ORDER BY ID DESC, post_date DESC ";
+    }
+
+    $query .= "LIMIT " . $limit . ";";
 
     return $wpdb->get_results($query);
 }
 
-function arc_limit_content($data, $contentPath, $contentLimit, $breakChar = ".", $padding = "..."){
+function arc_limit_content($data, $contentPath, $contentLimit, $breakChar = ".", $padding = "...") {
     $result = arc_convert_content($contentPath, $data);
     //$result = preg_replace("/<[^(p|br|h1|h2|h3|h4)][^>]*\>/i", "", $result); 
-    $result = preg_replace("/<br[^>]+\>/i", "\n", $result); 
-    $result = preg_replace("/<[^>]+\>/i", "", $result); 
+    $result = preg_replace("/<br[^>]+\>/i", "\n", $result);
+    $result = preg_replace("/<[^>]+\>/i", "", $result);
     $result = trim($result);
-    
+
     // Split the results to match the content limit. We will stop it at the periods
-    if(strlen($result) > $contentLimit && false !== ($breakpoint = strpos($result, $breakChar, $contentLimit))){ // Is the breakpoint here in the line
-        if($breakpoint < strlen($result) - 1){
+    if (strlen($result) > $contentLimit && false !== ($breakpoint = strpos($result, $breakChar, $contentLimit))) { // Is the breakpoint here in the line
+        if ($breakpoint < strlen($result) - 1) {
             $result = substr($result, 0, $breakpoint) . $padding;
         }
     }
-    
-    $result = nl2br($result); 
-    
+
+    $result = nl2br($result);
+
     return $result;
 }
 
-function arc_create_section($id, $data, $imagePath, $titlePath = '', $contentPath = '', $urlPath = '', $classes = '', $isVertical = true, $contentLimit = 140){
+function arc_create_section($id, $data, $imagePath, $titlePath = '', $contentPath = '', $urlPath = '', $classes = '', $isVertical = true, $contentLimit = 140, $imageAsDiv = false) {
     ?>
-<div id="<?php echo $id ?>" class="arc-sections <?php echo $classes ?>">
-    <?php
-    foreach($data as $key => $value){
-        ?>
-    <div class="arc-section">
-        <img src="<?php echo arc_convert_content($imagePath, $value)?>"/>
-        <h4><?php echo arc_convert_content($titlePath, $value)?></h4>
-        <div class='arc-section-content'>
-            <?php echo arc_limit_content($value, $contentPath, $contentLimit) ?>
-            <a class="arc-read-more" href="<?php echo arc_convert_content($urlPath, $value)?>">[Read More]</a>
-        </div>
-    </div>
+    <div id="<?php echo $id ?>" class="arc-sections <?php echo $classes ?>">
+        <?php
+        foreach ($data as $key => $value) {
+            ?>
+            <div class="arc-section">
+                <?php if ($imageAsDiv) { ?>
+                    <div class="arc-image-div" style="background-image: url(<?php echo arc_convert_content($imagePath, $value) ?>)"></div>
+                <?php } else { ?>
+                    <img src="<?php echo arc_convert_content($imagePath, $value) ?>"/>
+                <?php } ?>
+                <h4><?php echo arc_convert_content($titlePath, $value) ?></h4>
+                <div class='arc-section-content'>
+                    <?php echo arc_limit_content($value, $contentPath, $contentLimit) ?>
+                    <a class="arc-read-more" href="<?php echo arc_convert_content($urlPath, $value) ?>">[Read More]</a>
+                </div>
+            </div>
             <?php
-    }
+        }
         ?>
-</div>
+    </div>
     <?php
 }
 
 function arc_section_by_category($id, $categoryName, $isVertical = true, $classes = '', $limit = 3) {
     global $arc_carousel_array;
     $arc_carousel_array = array();
-    
+
     arc_get_posts_by_category($categoryName, 'Awl\arc_carousel_array_push', false, $limit);
     arc_create_section($id, $arc_carousel_array, '{$data->metadata["_arc_image_grid_img"]}', '$data->name', '{$data->get_post()->post_content}', '$data->url', $classes, $isVertical);
 }
 
 function get_posts_by_categoty() {
-
+    
 }
