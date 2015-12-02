@@ -140,7 +140,7 @@ function arc_limit_content($data, $contentPath, $contentLimit, $breakChar = ".",
     return $result;
 }
 
-function arc_create_section($id, $data, $imagePath, $titlePath = '', $contentPath = '', $urlPath = '', $classes = '', $isVertical = true){
+function arc_create_section($id, $data, $imagePath, $titlePath = '', $contentPath = '', $urlPath = '', $classes = '', $isVertical = true, $contentLimit = 140){
     ?>
 <div id="<?php echo $id ?>" class="arc-sections <?php echo $classes ?>">
     <?php
@@ -150,7 +150,7 @@ function arc_create_section($id, $data, $imagePath, $titlePath = '', $contentPat
         <img src="<?php echo arc_convert_content($imagePath, $value)?>"/>
         <h4><?php echo arc_convert_content($titlePath, $value)?></h4>
         <div class='arc-section-content'>
-            <?php echo arc_limit_content($value, $contentPath, 140) ?>
+            <?php echo arc_limit_content($value, $contentPath, $contentLimit) ?>
             <a class="arc-read-more" href="<?php echo arc_convert_content($urlPath, $value)?>">[Read More]</a>
         </div>
     </div>
