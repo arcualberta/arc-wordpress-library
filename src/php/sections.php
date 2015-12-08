@@ -60,13 +60,11 @@ function arc_get_posts_by_category($category, $objectOutputFunction, $random = f
 }
 
 
-
 function get_posts_by_category($category = "", $limit = 100, $random = false) {
     global $wpdb;
     $meta_values = get_meta_values();
-    $meta_count = 1;//count($meta_values);
+    $meta_count = count($meta_values);
     $first_meta_name = $meta_values[0]["meta"] . "meta";
-
     $query = "
         SELECT DISTINCT         
             posts.post_title,
@@ -77,18 +75,15 @@ function get_posts_by_category($category = "", $limit = 100, $random = false) {
         $meta_value = $meta_values[$i];
         $query .= ", " . $meta_value["meta"]. "meta.meta_value AS " . $meta_value["meta"];
     }
-
     
     $query .= " FROM $wpdb->posts posts, $wpdb->postmeta " . $first_meta_name;
-
     for ($i=1; $i<$meta_count; ++$i) {
         $meta_value = $meta_values[$i];
         $meta_name = $meta_value["meta"] . "meta ";
         $query .= " INNER JOIN $wpdb->postmeta " . $meta_name;
         $query .= " ON " . $meta_name . ".post_id = ". $first_meta_name . ".post_id";
-        $query .= " AND " . $meta_name . ".meta_key = " . "\'" . $meta_value["meta"] . "\'";
+        $query .= " AND " . $meta_name . ".meta_key = " . "'" . $meta_value["meta"] . "'";
     }
-
     $query .= " INNER JOIN
         $wpdb->term_relationships term_relationships
         ON term_relationships.object_id = " . $first_meta_name . ".post_id
@@ -103,17 +98,15 @@ function get_posts_by_category($category = "", $limit = 100, $random = false) {
     AND posts.post_type = 'post'
     AND ". $first_meta_name .".meta_key = '" . $meta_values[0]["meta"] . "'
     AND posts.ID = " . $first_meta_name . ".post_id
-    AND terms.name = '" . $category . "' ";
-        
+    AND terms.name = '" . $category . "' ";          
 
-    if ($random) {
-        // An exclusive or is used with a rand to keep meta-data grouped together.
-        $query .= "ORDER BY " . rand() . " ^ ID "; 
-    } else {
-        $query .= "ORDER BY ID DESC, post_date DESC ";
-    }
+        if ($random) {
+            $query .= "ORDER BY " . rand() . " ^ ID "; // An exclusive or is used with a rand to keep meta-data grouped together.
+        } else {
+            $query .= "ORDER BY ID DESC, post_date DESC ";
+        }
 
-    $query .= "LIMIT ".$limit.";";
+        $query .= "LIMIT ".$limit.";";
 
     return $wpdb->get_results($query);
 }
