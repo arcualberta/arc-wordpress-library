@@ -5,6 +5,7 @@
   Author: <a href="http://omarrodriguez.org/">Omar Rodriguez</a> & <a href="http://www.markmckellar.com/">Mark McKellar</a>
   Text Domain: arc-image-grid
  */
+namespace Awl;
 defined('ABSPATH') or die('No');
 
 // Set globals
@@ -46,7 +47,7 @@ function arc_scripts(){
     wp_enqueue_script('awl_script', plugins_url('js/awl.js', __FILE__));
     wp_localize_script( 'awl_script', 'awlAjax', array( 'ajaxurl' => admin_url( 'admin-ajax.php' ) ) );
 }
-add_action('wp_enqueue_scripts', 'arc_scripts');
+add_action('wp_enqueue_scripts', 'Awl\arc_scripts');
 
 // Functions that can be resused
 function arc_convert_content($content, $data){
@@ -66,10 +67,10 @@ function arc_meta_box_add() {
     $screens = array('post', 'page');
 
     foreach ($screens as $screen) {
-        add_meta_box('arc_meta_data', 'ARC Wordpress Library', 'arc_meta_box_callback', $screen);
+        add_meta_box('arc_meta_data', 'ARC Wordpress Library', 'Awl\arc_meta_box_callback', $screen);
     }
 }
-add_action('add_meta_boxes', 'arc_meta_box_add');
+add_action('add_meta_boxes', 'Awl\arc_meta_box_add');
 
 function arc_meta_box_add_field($post, $id, $label, $type){
     $value = get_post_meta($post->ID, $id, true);
@@ -105,27 +106,63 @@ function arc_meta_box_add_field($post, $id, $label, $type){
     echo '</p>';
 }
 
-function arc_meta_box_callback($post) {
-    wp_nonce_field('arc_meta_box_save', 'arc_meta_box_nonce');;
-    
-    arc_meta_box_add_field($post, '_arc_image_grid_img', 'Image', 'image');
-    echo '<br/>';    
-    
-    arc_meta_box_add_field($post, '_arc_image_grid_name', 'Grid Name', 'text');
-    echo '<br/>';
+function get_meta_values() {
+    $meta_values = array(
+        array(
+            "meta" => "_arc_image_grid_img",
+            "name" => "Image",
+            "type" => "image"
+        ),
+        array(
+            "meta" => "_arc_image_grid_name",
+            "name" => "Grid name",
+            "type" => "text"
+        ),
+        array(
+            "meta" => "_arc_description",
+            "name" => "Description",
+            "type" => "textarea"
+        ),
+        array(
+            "meta" => "_arc_start_date",
+            "name" => "Start date",
+            "type" => "date"
+        ),
+        array(
+            "meta" => "_arc_end_date",
+            "name" => "End date",
+            "type" => "date"
+        ),
+        array(
+            "meta" => "_arc_venue",
+            "name" => "Venue",
+            "type" => "text"
+        ),
+        array(
+            "meta" => "_arc_author",
+            "name" => "Author",
+            "type" => "text"
+        ),
+        array(
+            "meta" => "_arc_video_link",
+            "name" => "Video link",
+            "type" => "text"
+        )
+    );
 
-    arc_meta_box_add_field($post, '_arc_description', 'Description', 'textarea');
-    echo '<br/>';
+    return $meta_values;
+}
+
+function arc_meta_box_callback($post) {
+    wp_nonce_field('Awl\arc_meta_box_save', 'arc_meta_box_nonce');;
     
-    echo '<br><h3>Event Details</h3>';
-    arc_meta_box_add_field($post, '_arc_start_date', 'Start Date', 'date');
-    echo '<br/>';
-    
-    arc_meta_box_add_field($post, '_arc_end_date', 'End Date', 'date');
-    echo '<br/>';
-    
-    arc_meta_box_add_field($post, '_arc_venue', 'Venue', 'text');
-    echo '<br/>';
+    wp_nonce_field('Awl\arc_meta_box_save', 'arc_meta_box_nonce');;    
+    $meta_values = get_meta_values();
+    $meta_count = count($meta_values);
+    for ($i=0; $i < $meta_count; ++$i) {
+        $meta_value = $meta_values[$i];
+        arc_meta_box_add_field($post, $meta_values[$i]["meta"], $meta_values[$i]["name"], $meta_values[$i]["type"]);
+    }
     
     ?>
     <script>
@@ -174,7 +211,7 @@ function arc_meta_box_save($post_id) {
     }
 
 // Check if the nonce is valid
-    if (!wp_verify_nonce($_POST['arc_meta_box_nonce'], 'arc_meta_box_save')) {
+    if (!wp_verify_nonce($_POST['arc_meta_box_nonce'], 'Awl\arc_meta_box_save')) {
         return;
     }
 
@@ -195,22 +232,12 @@ function arc_meta_box_save($post_id) {
     }
 
 // Section to save the information
-    $value = sanitize_text_field($_POST['_arc_image_grid_name']);
-    update_post_meta($post_id, '_arc_image_grid_name', $value);
-
-    $value = sanitize_text_field($_POST['_arc_image_grid_img']);
-    update_post_meta($post_id, '_arc_image_grid_img', $value);
-
-    $value = sanitize_text_field($_POST['_arc_description']);
-    update_post_meta($post_id, '_arc_description', $value);
-    
-    $value = sanitize_text_field($_POST['_arc_start_date']);
-    update_post_meta($post_id, '_arc_start_date', $value);
-    
-    $value = sanitize_text_field($_POST['_arc_end_date']);
-    update_post_meta($post_id, '_arc_end_date', $value);
-    
-    $value = sanitize_text_field($_POST['_arc_venue']);
-    update_post_meta($post_id, '_arc_venue', $value);
+    $meta_values = get_meta_values();
+    $meta_count = count($meta_values);
+    for ($i=0; $i < $meta_count; ++$i) {
+        $meta_value = $meta_values[$i];
+        $value = sanitize_text_field($_POST[$meta_value["meta"]]);
+        update_post_meta($post_id, $meta_value["meta"], $value);
+    }
 }
-add_action('save_post', 'arc_meta_box_save');
+add_action('save_post', 'Awl\arc_meta_box_save');
