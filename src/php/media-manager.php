@@ -92,12 +92,22 @@ function get_featured_media($args) {
 	if (!array_key_exists('text_class', $args)) {
 		$args['text_class'] = '';
 	}
+	if (!array_key_exists('link', $args)) {
+		$args['link'] = false;
+	}
+
 	$post = $args["data"];
 
 	$result .= "<div id='".$args['container_id']."' class='".$args['container_class']."'>";
 	$result .= 	"<div class='".$args['post_class']."'>";
+	if ($args['link']) {
+		$result .= "<a href='" . $post->guid . "'>";
+	}
 	$result .= 	"<div style='background: url(\"".$post->_arc_image_grid_img."\")' class='".$args['image_class']."' >";
 	$result .= 	"</div>";
+	if ($args['link']) {
+		$result .= "</a>";	
+	}
 	$result .= 	"<div class='".$args['content_class']."''>";
 	$result .= 		"<div class='".$args['title_class']."'>";
 	$result .= 			$post->post_title;
