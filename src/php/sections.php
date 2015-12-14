@@ -112,11 +112,13 @@ function get_posts_by_category($category = "", $limit = 100, $random = false) {
 }
 
 function arc_limit_content($data, $contentPath, $contentLimit, $breakChar = ".", $padding = "..."){
+    $data = strip_tags($data);
+    $contentPath = strip_tags($contentPath);
     $result = arc_convert_content($contentPath, $data);
     //$result = preg_replace("/<[^(p|br|h1|h2|h3|h4)][^>]*\>/i", "", $result); 
-    $result = preg_replace("/<br[^>]+\>/i", "\n", $result); 
-    $result = preg_replace("/<[^>]+\>/i", "", $result); 
-    $result = strip_tags(trim($result));
+    // $result = preg_replace("/<br[^>]+\>/i", "\n", $result); 
+    // $result = preg_replace("/<[^>]+\>/i", "", $result); 
+    $result = trim($result);
     
     // Split the results to match the content limit. We will stop it at the periods
     if(strlen($result) > $contentLimit && false !== ($breakpoint = strpos($result, $breakChar, $contentLimit))){ // Is the breakpoint here in the line
