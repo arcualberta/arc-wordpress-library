@@ -116,7 +116,7 @@ function arc_limit_content($data, $contentPath, $contentLimit, $breakChar = ".",
     //$result = preg_replace("/<[^(p|br|h1|h2|h3|h4)][^>]*\>/i", "", $result); 
     $result = preg_replace("/<br[^>]+\>/i", "\n", $result); 
     $result = preg_replace("/<[^>]+\>/i", "", $result); 
-    $result = trim($result);
+    $result = strip_tags(trim($result));
     
     // Split the results to match the content limit. We will stop it at the periods
     if(strlen($result) > $contentLimit && false !== ($breakpoint = strpos($result, $breakChar, $contentLimit))){ // Is the breakpoint here in the line
