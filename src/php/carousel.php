@@ -150,6 +150,22 @@ function generate_media_content($args) {
         $result .= $data->_arc_description;
     }
     // $data->_arc_description.
+
+    $author = trim($data->_arc_author);
+    $time = trim($data->time);
+
+    if ($author != "" || $time != "") {
+        $result .= "<br />Posted";
+        if ($author != "") {
+            $result .= " by " . $author;
+        }
+
+        if ($time != "") {
+            $result .= " on " . $time;
+        }
+    }
+
+
     $result .= '</div>';
     $result .= '</div>';
     $result .= '</div>';
