@@ -76,38 +76,37 @@ function get_posts_by_category($category = "", $limit = 100, $random = false) {
         $query .= ", " . $meta_value["meta"]. "meta.meta_value AS " . $meta_value["meta"];
     }
     
-    $query .= " FROM $wpdb->posts posts, $wpdb->postmeta " . $first_meta_name;
-    for ($i=1; $i<$meta_count; ++$i) {
-        $meta_value = $meta_values[$i];
-        $meta_name = $meta_value["meta"] . "meta ";
-        $query .= " INNER JOIN $wpdb->postmeta " . $meta_name;
-        $query .= " ON " . $meta_name . ".post_id = ". $first_meta_name . ".post_id";
-        $query .= " AND " . $meta_name . ".meta_key = " . "'" . $meta_value["meta"] . "'";
-    }
+    $query .= " FROM (SELECT p.* FROM $wpdb->posts p"; // This has been moved to a select statement where we limit the content inititally. This greatly improves the speed of the query.
     $query .= " INNER JOIN
         $wpdb->term_relationships term_relationships
-        ON term_relationships.object_id = " . $first_meta_name . ".post_id
+        ON term_relationships.object_id = p.ID
     INNER JOIN
         $wpdb->term_taxonomy term_taxonomy
         ON term_taxonomy.term_taxonomy_id = term_relationships.term_taxonomy_id
     INNER JOIN
         $wpdb->terms terms
         ON terms.term_id = term_taxonomy.term_id
-    WHERE
-    posts.post_status = 'publish'
-    AND posts.post_type = 'post'
-    AND ". $first_meta_name .".meta_key = '" . $meta_values[0]["meta"] . "'
-    AND posts.ID = " . $first_meta_name . ".post_id
-    AND terms.name = '" . $category . "' ";          
-
-        if ($random) {
+        AND terms.name = '" . $category . "' 
+        WHERE
+    p.post_status = 'publish'
+    AND p.post_type = 'post' ";
+    if ($random) {
             $query .= "ORDER BY " . rand() . " ^ ID "; // An exclusive or is used with a rand to keep meta-data grouped together.
         } else {
             $query .= "ORDER BY ID DESC, post_date DESC ";
         }
-
-        $query .= "LIMIT ".$limit.";";
-
+    $query .= "LIMIT ".$limit;
+    $query .= ") posts ";
+    for ($i=0; $i<$meta_count; ++$i) {
+        $meta_value = $meta_values[$i];
+        $meta_name = $meta_value["meta"] . "meta ";
+        $query .= " INNER JOIN $wpdb->postmeta " . $meta_name;
+        $query .= " ON " . $meta_name . ".post_id = posts.ID";
+        $query .= " AND " . $meta_name . ".meta_key = " . "'" . $meta_value["meta"] . "'";
+    }   
+    
+    $query .= ";";
+        error_log($query);
     return $wpdb->get_results($query);
 }
 
