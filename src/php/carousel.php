@@ -155,7 +155,7 @@ function generate_media_content($args) {
     $time = trim($data->time);
 
     if ($author != "" || $time != "") {
-        $result .= "<br />Posted";
+        $result .= "<br/><br/>Posted";
         if ($author != "") {
             $result .= " by " . $author;
         }
