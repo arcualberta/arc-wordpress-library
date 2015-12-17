@@ -37,6 +37,9 @@ function get_title_desc_media($args) {
 	if (!array_key_exists('text_class', $args)) {
 		$args['text_class'] = '';
 	}
+        if (!array_key_exists('show_description', $args)) {
+		$args['show_description'] = true;
+	}
 
 
 	$result .= "<div id='".$args['container_id']."' class='".$args['container_class']."'>";
@@ -49,10 +52,14 @@ function get_title_desc_media($args) {
 		$result .= 		"<div class='".$args['title_class']."'>";
 		$result .= 			$post->post_title;
 		$result .= 		"</div>";
-		$result .= 		"<div class='".$args['text_class']."'>";
-		// $result .=  		arc_limit_content("", $post->post_content, 50);
-		$result .=		$post->_arc_description;
-		$result .= 		"</div>";
+                
+                if($args['show_description']){
+                    $result .= 		"<div class='".$args['text_class']."'>";
+                    // $result .=  		arc_limit_content("", $post->post_content, 50);
+                    $result .=		$post->_arc_description;
+                    $result .= 		"</div>";
+                }
+                
 		$result .= 		"<div>";
 		$result .= 			"<a href='".$post->guid."'>More</a>";
 		$result .= 		"</div>";
@@ -112,13 +119,14 @@ function get_featured_media($args) {
 	$result .= 		"<div class='".$args['title_class']."'>";
 	$result .= 			$post->post_title;
 	$result .= 		"</div>";
-	$result .= 		"<div class='".$args['text_class']."'>";
-	$description = $post->_arc_description;
-	if ($description == "") {
-		$description = trim(arc_limit_content("", $post->post_content, 300));
-	}
-	$result .=		$description;
-	$result .= 		"</div>";
+        $result .= 		"<div class='".$args['text_class']."'>";
+        $description = $post->_arc_description;
+        if ($description == "") {
+            $description = trim(arc_limit_content("", $post->post_content, 300));
+        }
+        $result .=		$description;
+        $result .= 		"</div>";
+        
 	$result .= 		"<div>";
 	$result .= 			"<a href='".$post->guid."'>More</a>";
 	$result .= 		"</div>";
