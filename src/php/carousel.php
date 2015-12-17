@@ -181,7 +181,7 @@ function generate_media_content($args) {
             $result .= htmlspecialchars($value->name);
             $result .= "</a>";
         }
-        $result .= "<div>";
+        $result .= "</div>";
     }
     $result .= '</div>';
     $result .= '</div>';
