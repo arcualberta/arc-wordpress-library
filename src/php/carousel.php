@@ -169,8 +169,20 @@ function generate_media_content($args) {
         }
     }
 
-
     $result .= '</div>';
+    if(array_key_exists('tags', $data)){
+        $tags = $data->tags;
+        $result .= "<div class='media-tags'>Tags:&nbsp;";
+        foreach($tags as $key => $value){
+            if($key > 0){
+                $result .= ',&nbsp';
+            }
+            $result .= "<a href='" . get_tag_link($value->term_id) . "' >";
+            $result .= htmlspecialchars($value->name);
+            $result .= "</a>";
+        }
+        $result .= "<div>";
+    }
     $result .= '</div>';
     $result .= '</div>';
 
