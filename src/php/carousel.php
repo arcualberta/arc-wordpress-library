@@ -134,6 +134,10 @@ function generate_media_content($args) {
     $media_class = $args['media_class'];
     $media_container = $args['media_container'];
     
+    if (!array_key_exists('show_author', $args)) {
+        $args['show_author'] = true;
+    }
+    
     $result = '';
     $result .= '<div class="media '.$media_container.'">';
     $result .= '<div class="media-left">';    
@@ -154,7 +158,7 @@ function generate_media_content($args) {
     $author = trim($data->_arc_author);
     $time = trim($data->time);
 
-    if ($author != "" || $time != "") {
+    if ($args['show_author'] && ($author != "" || $time != "")) {
         $result .= "<br/><br/>Posted";
         if ($author != "") {
             $result .= " by " . $author;
