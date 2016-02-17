@@ -196,16 +196,12 @@ function generate_media_content($args) {
 // carousel_id
 // media_class
 
-function get_media_carousel($args) {
-    
+function get_media_carousel($args) {  
 
     if (!array_key_exists("data", $args)) {
         return '';
     }
 
-    if (!array_key_exists("carousel_id", $args)) {
-        $args['carousel_id'] = '';
-    }
     if (!array_key_exists("media_class", $args)) {
         $args['media_class'] = '';
     }
@@ -222,5 +218,91 @@ function get_media_carousel($args) {
 
     $result = generate_carousel($args);
 
+    return $result;
+}
+
+function generate_background_image_content($args, $i) {
+    $data = $args['data'];
+    $background_image_class = $args['background_image_class'];
+    $container_class = $args['container_class'];
+    $title_class = $args['title_class'];
+    $description_class = $args['description_class'];
+    $read_more_class = $args['read_more_class'];
+    $read_more = $args['read_more'];
+    $max_description_chars = $args['max_description_chars'];
+
+    $result = "";
+    // background image
+    $result .= "<div class='".$background_image_class."' style='background-image: url(".$data->_arc_image_grid_img.")'>";
+    // inside content
+    $result .= "<div class='".$container_class."'>";
+    $result .= "<div class='".$title_class."'>";
+    $result .= $data->post_title;
+    $result .= "</div>";
+    $result .= "<div class='".$description_class."'>";
+    if (empty($data->_arc_description)) {
+        // substitute for excerpt ?
+        $result .= arc_limit_content("", $data->post_content, $max_description_chars);
+    } else {
+        $result .= arc_limit_content("", $data->_arc_description, $max_description_chars);
+    }
+
+    $result .= "</div>";
+
+    $result .= "<div class='".$read_more_class."'>";
+    if ($read_more) {
+        $result .= "<a href='".$data->guid."'>";
+        $result .= "Read more";
+        $result .= "</a>";
+    }
+    $result .= "</div>";
+    $result .= "</div>";
+    $result .= "</div>";
+
+    return $result;
+}
+
+function get_background_image_carousel($args) {
+
+    if (!array_key_exists("data", $args)) {
+        return '';
+    }
+
+    // 
+
+    if (!array_key_exists("background_image_class", $args)) {
+        $args['background_image_class'] = '';
+    }
+
+    if (!array_key_exists("container_class", $args)) {
+        $args['container_class'] = '';
+    }
+
+    if (!array_key_exists("title_class", $args)) {
+        $args['title_class'] = '';
+    }
+
+    if (!array_key_exists("description_class", $args)) {
+        $args['description_class'] = '';
+    }
+
+    if (!array_key_exists("read_more_class", $args)) {
+        $args['read_more_class'] = true;
+    }
+
+    if (!array_key_exists("read_more", $args)) {
+        $args['read_more'] = true;
+    }
+
+    if (!array_key_exists("max_description_chars", $args)) {
+        $args['max_description_chars'] = 500;
+    }
+
+    $args['process_slide'] = function($args, $i) {
+        $args['data'] = $args['data'][$i];
+        return generate_background_image_content($args, $i);
+    };
+
+    $result = generate_carousel($args);
     return $result;
 }
