@@ -221,7 +221,7 @@ function get_media_carousel($args) {
 
     $args['process_slide'] = function($args, $i) {
         $args['data'] = $args['data'][$i];
-        return generate_media_content($args, $i);
+        return generate_media_content($args);
     };
 
     $result = generate_carousel($args);
@@ -229,7 +229,7 @@ function get_media_carousel($args) {
     return $result;
 }
 
-function generate_background_image_content($args, $i) {
+function generate_background_image_content($args) {
     $data = $args['data'];
     $background_image_class = $args['background_image_class'];
     $container_class = $args['container_class'];
@@ -313,20 +313,30 @@ function get_background_image_carousel($args) {
 
     $args['process_slide'] = function($args, $i) {
         $args['data'] = $args['data'][$i];
-        return generate_background_image_content($args, $i);
+        return generate_background_image_content($args);
     };
 
     $result = generate_carousel($args);
     return $result;
 }
 
-function generate_multiple_image_content($args, $i) {
+function generate_multiple_image_content($args) {
     $result = "";
 
     return $result;
 }
 
 function get_multiple_image_carousel($args) {
+
+    // classes ids
+
+    // slide generation callback
+
+    $args['process_slide'] = function($args, $i) {
+        $args['data'] = $args['data'][$i];
+        return generate_multiple_image_content($args);
+    };
+
     $result = generate_carousel($args);
     return $result;
 }
