@@ -229,6 +229,7 @@ function generate_background_image_content($args, $i) {
     $description_class = $args['description_class'];
     $read_more_class = $args['read_more_class'];
     $read_more = $args['read_more'];
+    $read_more_text = $args['read_more_text'];
     $max_description_chars = $args['max_description_chars'];
 
     $result = "";
@@ -252,7 +253,7 @@ function generate_background_image_content($args, $i) {
     $result .= "<div class='".$read_more_class."'>";
     if ($read_more) {
         $result .= "<a href='".$data->guid."'>";
-        $result .= "Read more";
+        $result .= $read_more_text;
         $result .= "</a>";
     }
     $result .= "</div>";
@@ -292,6 +293,10 @@ function get_background_image_carousel($args) {
 
     if (!array_key_exists("read_more", $args)) {
         $args['read_more'] = true;
+    }
+
+    if (!array_key_exists("read_more_text", $args)) {
+        $args['read_more_text'] = "Read more";
     }
 
     if (!array_key_exists("max_description_chars", $args)) {
