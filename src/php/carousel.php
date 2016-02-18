@@ -65,10 +65,14 @@ function arc_image_carousel_by_category($id, $categoryName, $limit = 10){
 
 function generate_carousel($args) {
     $result = "";
+    
 
     if (!array_key_exists("data", $args)) {
         return $result;
     }
+    
+    $post_count = count($args['data']);
+
     if (!array_key_exists("carousel_id", $args)) {
         $args['carousel_id'] = '';
     }
@@ -78,17 +82,19 @@ function generate_carousel($args) {
     
     // add indicators
 
-    $result .= '<ol class="carousel-indicators">';
+    if ($post_count > 1) {
+        $result .= '<ol class="carousel-indicators">';
 
-    $post_count = count($args['data']);
+        
 
-    if ($post_count > 0) {
-        $result .= '<li data-target="#'.$args['carousel_id'].'" data-slide-to="0" class="active"></li>';    
-        for ($i=1; $i<$post_count; ++$i) {
-            $result .= '<li data-target="#'.$args['carousel_id'].'" data-slide-to="'.$i.'"></li>';    
+        if ($post_count > 0) {
+            $result .= '<li data-target="#'.$args['carousel_id'].'" data-slide-to="0" class="active"></li>';    
+            for ($i=1; $i<$post_count; ++$i) {
+                $result .= '<li data-target="#'.$args['carousel_id'].'" data-slide-to="'.$i.'"></li>';    
+            }
         }
+        $result .= '</ol>';
     }
-    $result .= '</ol>';
 
 
 
@@ -111,15 +117,17 @@ function generate_carousel($args) {
     }
 
     // add controls and end
+    if ($post_count > 1) {
+        $result .= '<a class="left carousel-control" href="#'.$args['carousel_id'].'" role="button" data-slide="prev">';
+        $result .= '<span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>';
+        $result .= '<span class="sr-only">Previous</span>';
+        $result .= '</a>';
+        $result .= '<a class="right carousel-control" href="#'.$args['carousel_id'].'" role="button" data-slide="next">';
+        $result .= '<span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>';
+        $result .= '<span class="sr-only">Next</span>';
+        $result .= '</a>';
+    }
 
-    $result .= '<a class="left carousel-control" href="#'.$args['carousel_id'].'" role="button" data-slide="prev">';
-    $result .= '<span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>';
-    $result .= '<span class="sr-only">Previous</span>';
-    $result .= '</a>';
-    $result .= '<a class="right carousel-control" href="#'.$args['carousel_id'].'" role="button" data-slide="next">';
-    $result .= '<span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>';
-    $result .= '<span class="sr-only">Next</span>';
-    $result .= '</a>';
     $result .= '</div>';
 
 
@@ -308,6 +316,17 @@ function get_background_image_carousel($args) {
         return generate_background_image_content($args, $i);
     };
 
+    $result = generate_carousel($args);
+    return $result;
+}
+
+function generate_multiple_image_content($args, $i) {
+    $result = "";
+
+    return $result;
+}
+
+function get_multiple_image_carousel($args) {
     $result = generate_carousel($args);
     return $result;
 }
