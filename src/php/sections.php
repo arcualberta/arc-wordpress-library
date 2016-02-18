@@ -60,11 +60,18 @@ function arc_get_posts_by_category($category, $objectOutputFunction, $random = f
 }
 
 
-function get_posts_by_category($category = "", $limit = 100, $random = false) {
+function get_posts_by_category($category = "", $limit = 100, $random = false, $order = "desc") {
     global $wpdb;
     $meta_values = get_meta_values();
     $meta_count = count($meta_values);
     $first_meta_name = $meta_values[0]["meta"] . "meta";
+
+    $order = strtolower($order);
+
+    if ($order != "desc" && $order != "asc") {
+        $order = "desc";
+    }
+
     $query = "
         SELECT DISTINCT         
             posts.post_title,
@@ -93,7 +100,7 @@ function get_posts_by_category($category = "", $limit = 100, $random = false) {
     if ($random) {
             $query .= "ORDER BY " . rand() . " ^ ID "; // An exclusive or is used with a rand to keep meta-data grouped together.
         } else {
-            $query .= "ORDER BY ID DESC, post_date DESC ";
+            $query .= "ORDER BY ID ".$order.", post_date ".$order." ";
         }
     $query .= "LIMIT ".$limit;
     $query .= ") posts ";
@@ -158,8 +165,4 @@ function arc_section_by_category($id, $categoryName, $isVertical = true, $classe
     
     arc_get_posts_by_category($categoryName, 'Awl\arc_carousel_array_push', false, $limit);
     arc_create_section($id, $arc_carousel_array, '{$data->metadata["_arc_image_grid_img"]}', '$data->name', '{$data->get_post()->post_content}', '$data->url', $classes, $isVertical);
-}
-
-function get_posts_by_categoty() {
-
 }
