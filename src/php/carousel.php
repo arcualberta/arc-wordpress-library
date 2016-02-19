@@ -72,10 +72,11 @@ function generate_carousel($args) {
     }
     
     $post_count = count($args['data']);
-    $slide_count = $post_count;
-    if (array_key_exists('items_per_slide', $args)) {
-        $slide_count = $post_count / $args[items_per_slide];
-    }
+    if (!array_key_exists("items_per_slide", $args)) {
+        $args['items_per_slide'] = 1;
+    }    
+    $slide_count = $post_count / $args[items_per_slide];
+    
 
     if (!array_key_exists("carousel_id", $args)) {
         $args['carousel_id'] = '';
@@ -109,13 +110,16 @@ function generate_carousel($args) {
         // 0
         $i = 0;
         $result .= '<div class="item active">';
-        $result .= $args['process_slide']($args, $i);
+
+        list($buffer, $i) = $args['process_slide']($args, $i);
+        $result .= $buffer;
         $result .= '</div>';
         // rest
-        ++$i;
-        for (; $i<$post_count; ++$i) {
+        
+        while ($i<$post_count) {
             $result .= '<div class="item">';
-            $result .= $args['process_slide']($args, $i);
+            list($buffer, $i) = $args['process_slide']($args, $i);
+            $result .= $buffer;
             $result .= '</div>';
         }
 
@@ -224,7 +228,7 @@ function get_media_carousel($args) {
 
     $args['process_slide'] = function($args, $i) {
         $args['data'] = $args['data'][$i];
-        return generate_media_content($args);
+        return array(generate_media_content($args), ++$i);
     };
 
     $result = generate_carousel($args);
@@ -316,7 +320,7 @@ function get_background_image_carousel($args) {
 
     $args['process_slide'] = function($args, $i) {
         $args['data'] = $args['data'][$i];
-        return generate_background_image_content($args);
+        return array(generate_background_image_content($args), ++$i);
     };
 
     $result = generate_carousel($args);
@@ -379,10 +383,6 @@ function get_multiple_post_carousel($args) {
         $args['post_class'] = '';
     }
 
-    if (!array_key_exists("items_per_slide", $args)) {
-        $args['items_per_slide'] = 5;
-    }
-
     if (!array_key_exists("title_class", $args)) {
         $args['title_class'] = '';
     }
@@ -402,11 +402,11 @@ function get_multiple_post_carousel($args) {
 
     // slide generation call
 
-    $args['process_slide'] = function($args, &$i) {
+    $args['process_slide'] = function($args, $i) {
         $items_per_slide = $args['items_per_slide'];
-        $args['data'] = array_slice($args['data'], $i, $i + $items_per_slide );
-        $i = $i + $items_per_slide - 1;
-        return generate_multiple_image_content($args);
+        $last_item = $i + $items_per_slide;
+        $args['data'] = array_slice($args['data'], $i, $items_per_slide );
+        return array(generate_multiple_image_content($args), $last_item);
     };
 
     $result = generate_carousel($args);
