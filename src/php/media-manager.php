@@ -2,8 +2,10 @@
 namespace Awl;
 defined('ABSPATH') or die('No');
 
+// function is deprecated and should not be used
+// use get_multiple_post_carousel instead
 function get_title_desc_media($args) {
-
+	
 	$result = "";
 
 	if (!array_key_exists("data", $args)) {

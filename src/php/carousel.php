@@ -329,6 +329,10 @@ function generate_multiple_image_content($args) {
     $container_class = $args['container_class'];
     $image_class = $args['image_class'];
     $post_class = $args['post_class'];
+    $title_class = $args['title_class'];
+    $description_class = $args['description_class'];
+    $read_more_class = $args['read_more_class'];
+    $read_more_text = $args['read_more_text'];
 
 
     $result = "";
@@ -336,17 +340,22 @@ function generate_multiple_image_content($args) {
     $result .= "<div id='".$container_id."' class='".$container_class."'>";
 
     foreach ($data as $post) {      
-        $result .=  "<div data-title='".$post->post_title."' data-description='".$post->_arc_description."' data-image='".$post->_arc_image_grid_img."' data-guid='".$post->guid."' class='".$args['post_class']."'>";
-        $result .=  "<div style='background: url(\"".$post->_arc_image_grid_img."\")' class='".$image_class."' >";
-        $result .=  "</div>";
-        $result .=  "</div>";       
+        // $result .=  "<div data-title='".$post->post_title."' data-description='".$post->_arc_description."' data-image='".$post->_arc_image_grid_img."' data-guid='".$post->guid."' class='".$args['post_class']."'>";
+        $result .= "<div class='".$post_class."'>";
+        $result .= "<div clas='".$image_class."'style='background: url(\"".$post->_arc_image_grid_img."\")' class='".$image_class."' ></div>";
+        $result .= "<div class='".$title_class."'>".$post->post_title."</div>";
+        $result .= "<div class='".$description_class."'>".$post->_arc_description."</div>";
+        $result .= "<div class='".$read_more_class."'>";
+        $result .= "<a href='".$post->guid."'>".$read_more_text."</a>";
+        $result .= "</div>";
+        $result .= "</div>";
     }
     $result .=  "</div>";
 
     return $result;
 }
 
-function get_multiple_image_carousel($args) {
+function get_multiple_post_carousel($args) {
 
     if (!array_key_exists("data", $args) || is_null($args['data'])) {
         return '';
@@ -373,6 +382,23 @@ function get_multiple_image_carousel($args) {
     if (!array_key_exists("items_per_slide", $args)) {
         $args['items_per_slide'] = 5;
     }
+
+    if (!array_key_exists("title_class", $args)) {
+        $args['title_class'] = '';
+    }
+    
+    if (!array_key_exists("description_class", $args)) {
+        $args['description_class'] = '';
+    }
+    
+    if (!array_key_exists("read_more_class", $args)) {
+        $args['read_more_class'] = '';
+    }
+
+    if (!array_key_exists("read_more_text", $args)) {
+        $args['read_more_text'] = 'Read more';
+    }
+
 
     // slide generation call
 
