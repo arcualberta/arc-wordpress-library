@@ -352,9 +352,8 @@ function generate_multiple_image_content($args) {
 
         $description = $post->_arc_description;
         if (strlen($description) > $max_characters) {
-            $description = substr($description, $max_characters - 3) . "...";
+            $description = substr($description, 0, intval($max_characters) - 3) . "...";
         }
-
         $result .= "<div class='".$description_class."'>".$description."</div>";
         $result .= "<div class='".$read_more_class."'>";
         $result .= "<a href='".$post->guid."'>".$read_more_text."</a>";
