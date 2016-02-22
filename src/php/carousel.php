@@ -407,6 +407,8 @@ function get_multiple_post_carousel($args) {
 
     if (!array_key_exists("max_characters", $args)) {
         $args['max_characters'] = INF;
+    } elseif ($args['max_characters'] < 3) {
+        $args['max_characters'] = 3;
     }
 
 
