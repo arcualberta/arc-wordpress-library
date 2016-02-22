@@ -337,6 +337,7 @@ function generate_multiple_image_content($args) {
     $description_class = $args['description_class'];
     $read_more_class = $args['read_more_class'];
     $read_more_text = $args['read_more_text'];
+    $max_characters = $args['max_characters'];
 
 
     $result = "";
@@ -348,7 +349,13 @@ function generate_multiple_image_content($args) {
         $result .= "<div class='".$post_class."'>";
         $result .= "<div clas='".$image_class."'style='background: url(\"".$post->_arc_image_grid_img."\")' class='".$image_class."' ></div>";
         $result .= "<div class='".$title_class."'>".$post->post_title."</div>";
-        $result .= "<div class='".$description_class."'>".$post->_arc_description."</div>";
+
+        $description = $post->_arc_description;
+        if (strlen($description) > $max_characters) {
+            $description = substr($description, $max_characters - 3) . "...";
+        }
+
+        $result .= "<div class='".$description_class."'>".$description."</div>";
         $result .= "<div class='".$read_more_class."'>";
         $result .= "<a href='".$post->guid."'>".$read_more_text."</a>";
         $result .= "</div>";
@@ -397,6 +404,10 @@ function get_multiple_post_carousel($args) {
 
     if (!array_key_exists("read_more_text", $args)) {
         $args['read_more_text'] = 'Read more';
+    }
+
+    if (!array_key_exists("max_characters", $args)) {
+        $args['max_characters'] = INF;
     }
 
 
