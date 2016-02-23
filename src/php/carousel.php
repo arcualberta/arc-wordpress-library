@@ -82,8 +82,12 @@ function generate_carousel($args) {
         $args['carousel_id'] = '';
     }
 
+    if (!array_key_exists("carousel_class", $args)) {
+        $args['carousel_class'] = '';
+    }
+
     // add start of carousel
-    $result .= '<div id="'.$args['carousel_id'].'" class="carousel slide" data-ride="carousel">';
+    $result .= '<div id="'.$args['carousel_id'].'" class="'.$args['carousel_class'].'  carousel slide" data-ride="carousel">';
     
     // add indicators
 
@@ -345,7 +349,6 @@ function generate_multiple_image_content($args) {
     $result .= "<div id='".$container_id."' class='".$container_class."'>";
 
     foreach ($data as $post) {      
-        // $result .=  "<div data-title='".$post->post_title."' data-description='".$post->_arc_description."' data-image='".$post->_arc_image_grid_img."' data-guid='".$post->guid."' class='".$args['post_class']."'>";
         $result .= "<div class='".$post_class."'>";
         $result .= "<div clas='".$image_class."'style='background: url(\"".$post->_arc_image_grid_img."\")' class='".$image_class."' ></div>";
         $result .= "<div class='".$title_class."'>".$post->post_title."</div>";
