@@ -59,7 +59,136 @@ function arc_get_posts_by_category($category, $objectOutputFunction, $random = f
     }
 }
 
+function validate_get_posts($args) {
+    $result = $args;
+    if (!array_key_exists('term_name', $result)) {
+        $result['term_name'] = "";
+    }
 
+    if (!array_key_exists('limit', $result)) {
+        $result['limit'] = 100;
+    }
+
+    if (!array_key_exists('order', $result)) {
+        $result['order'] = "desc";
+    } else {
+        $order = $result['order'];
+        $order = strtolower($order);
+
+        if ($order != "desc" && $order != "asc") {
+            $order = "desc";
+        }
+        $result['order'] = $order;
+    }
+    
+    if (!array_key_exists('order_by', $result)) {
+        $result['order_by'] = "ID";
+    } else {
+        $order_by = strtolower($result['order_by']);
+        if ($order_by == 'random') {
+            $order_by = "RAND()";
+        } elseif ($order_by = 'arc_id') {
+            // * 1 allows to sort as numbers 
+            $order_by = "_arc_index * 1"; 
+        } else {
+            $order_by = "ID";
+        }
+        $result['order_by'] = $order_by;
+    }
+
+    if (!array_key_exists('taxonomy', $result)) {
+        $result['taxonomy'] = 'category';
+    }
+
+    return $result;
+
+}
+
+function fetch_db_posts($args) {
+    global $wpdb;
+
+    $args = validate_get_posts($args);
+    $term_name = $args['term_name'];
+    $limit = $args['limit'];
+    $order = $args['order'];
+    $order_by = $args['order_by'];
+    $taxonomy = $args['taxonomy'];
+    $meta_values = get_meta_values();
+
+    // get first 
+
+    $query = $wpdb->prepare("
+        SELECT DISTINCT         
+            posts.ID,
+            posts.post_title,
+            posts.post_content,
+            posts.guid, 
+            _arc_indexmeta.meta_value AS _arc_index
+        FROM $wpdb->posts posts, $wpdb->postmeta _arc_indexmeta
+        INNER JOIN
+            $wpdb->term_relationships term_relationships
+            ON term_relationships.object_id = _arc_indexmeta.post_id
+        INNER JOIN
+            $wpdb->term_taxonomy term_taxonomy
+            ON term_taxonomy.term_taxonomy_id = term_relationships.term_taxonomy_id
+        INNER JOIN
+            $wpdb->terms terms
+            ON terms.term_id = term_taxonomy.term_id
+            AND term_taxonomy.taxonomy = %s
+        WHERE
+            posts.post_status = 'publish'
+        AND posts.post_type = 'post'
+        AND _arc_indexmeta.meta_key = '_arc_index'
+        AND posts.ID = _arc_indexmeta.post_id
+        AND terms.name = %s
+        ORDER BY $order_by $order
+        LIMIT %d",
+        $taxonomy,
+        $term_name,                
+        $limit
+    );
+    
+    $posts = $wpdb->get_results($query);
+    return $posts;
+}
+
+function fetch_db_posts_meta($posts) {
+    global $wpdb;
+    // id to index reference
+    $post_reference = array();
+
+    $meta_query = "SELECT post_id, meta_key, meta_value FROM wp_postmeta WHERE ";
+    $post_count = count($posts);
+    $sql_join_text = " OR ";
+    
+    foreach($posts as $i => $post) {
+        $post_reference[strval($post->ID)] = $i;
+        $meta_query .= "post_id = " . $post->ID . $sql_join_text;
+    }
+
+    $meta_query = substr($meta_query, 0, strlen($meta_query) - strlen($sql_join_text) ) . ";";
+    $meta_results = $wpdb->get_results($meta_query);
+
+    // add meta values to each post
+    foreach ($meta_results as $meta) {
+        $post_index = $post_reference[strval($meta->post_id)];
+        $post = $posts[$post_index];
+        $post = (object) array_merge( (array)$post, array( $meta->meta_key => $meta->meta_value ) );
+        $posts[$post_index] = $post;
+    }
+    return $posts;
+}
+
+function get_posts($args) {
+
+    $posts = fetch_db_posts($args);
+    $posts = fetch_db_posts_meta($posts);
+
+    return $posts;
+
+}
+
+// deprecated, use get_posts instead
 function get_posts_by_category($category = "", $limit = 100, $random = false, $order = "desc") {
     global $wpdb;
     $meta_values = get_meta_values();
@@ -93,7 +222,8 @@ function get_posts_by_category($category = "", $limit = 100, $random = false, $o
     INNER JOIN
         $wpdb->terms terms
         ON terms.term_id = term_taxonomy.term_id
-        AND terms.name = '" . $category . "' 
+        AND terms.name = '" . $category . "'
+        AND term_taxonomy = 'category'
         WHERE
     p.post_status = 'publish'
     AND p.post_type = 'post' ";
@@ -113,7 +243,7 @@ function get_posts_by_category($category = "", $limit = 100, $random = false, $o
     }   
     
     $query .= ";";
-        error_log($query);
+        // error_log($query);
     return $wpdb->get_results($query);
 }
 
@@ -121,9 +251,6 @@ function arc_limit_content($data, $contentPath, $contentLimit, $breakChar = ".",
     $data = strip_tags($data);
     $contentPath = strip_tags($contentPath);
     $result = arc_convert_content($contentPath, $data);
-    //$result = preg_replace("/<[^(p|br|h1|h2|h3|h4)][^>]*\>/i", "", $result); 
-    // $result = preg_replace("/<br[^>]+\>/i", "\n", $result); 
-    // $result = preg_replace("/<[^>]+\>/i", "", $result); 
     $result = trim($result);
     
     // Split the results to match the content limit. We will stop it at the periods

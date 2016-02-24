@@ -109,6 +109,11 @@ function arc_meta_box_add_field($post, $id, $label, $type){
 function get_meta_values() {
     $meta_values = array(
         array(
+            "meta" => "_arc_index",
+            "name" => "Index",
+            "type" => "text"
+        ),
+        array(
             "meta" => "_arc_image_grid_img",
             "name" => "Image",
             "type" => "image"
