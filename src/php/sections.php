@@ -123,7 +123,9 @@ function fetch_db_posts($args) {
             posts.post_title,
             posts.post_content,
             posts.guid, 
-            _arc_indexmeta.meta_value AS _arc_index
+            IF (_arc_indexmeta.meta_value is NULL 
+            OR _arc_indexmeta.meta_value = '', ".PHP_INT_MAX.", _arc_indexmeta.meta_value)  
+            AS _arc_index
         FROM $wpdb->posts posts, $wpdb->postmeta _arc_indexmeta
         INNER JOIN
             $wpdb->term_relationships term_relationships
