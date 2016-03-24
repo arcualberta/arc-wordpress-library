@@ -152,7 +152,6 @@ function generate_carousel($args) {
     }
 
     $result .= '</div>';
-    $result .= "args['right_control_class']";
 
     return $result;
 }
