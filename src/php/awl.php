@@ -9,8 +9,8 @@ namespace Awl;
 defined('ABSPATH') or die('No');
 
 // Set globals
-$arcEnableBootstrap = false;
-$arcEnableJQuery = false;
+$arcEnableBootstrap = true;
+$arcEnableJQuery = true;
 
 class ARCPostCell {
     public $id = 0;
