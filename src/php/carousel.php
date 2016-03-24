@@ -86,6 +86,14 @@ function generate_carousel($args) {
         $args['carousel_class'] = '';
     }
 
+    if (!array_key_exists("left_control_class", $args)) {
+        $args["left_control_class"] = "glyphicon glyphicon-chevron-left";
+    }
+
+    if (!array_key_exists("right_control_class", $args)) {
+        $args["right_control_class"] = "glyphicon glyphicon-chevron-right";
+    }
+
     // add start of carousel
     $result .= '<div id="'.$args['carousel_id'].'" class="'.$args['carousel_class'].'  carousel slide" data-ride="carousel">';
     
@@ -133,17 +141,18 @@ function generate_carousel($args) {
     // add controls and end
     if ($slide_count > 1) {
         $result .= '<a class="left carousel-control" href="#'.$args['carousel_id'].'" role="button" data-slide="prev">';
-        $result .= '<span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>';
+        $result .= '<span class="'.$args['left_control_class'].'" aria-hidden="true"></span>';
         $result .= '<span class="sr-only">Previous</span>';
         $result .= '</a>';
         $result .= '<a class="right carousel-control" href="#'.$args['carousel_id'].'" role="button" data-slide="next">';
-        $result .= '<span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>';
+        $result .= '<span class="'.$args['right_control_class'].'" aria-hidden="true"></span>';
         $result .= '<span class="sr-only">Next</span>';
         $result .= '</a>';
+
     }
 
     $result .= '</div>';
-
+    $result .= "args['right_control_class']";
 
     return $result;
 }
@@ -413,6 +422,7 @@ function get_multiple_post_carousel($args) {
     } elseif ($args['max_characters'] < 3) {
         $args['max_characters'] = 3;
     }
+
 
 
     // slide generation call
