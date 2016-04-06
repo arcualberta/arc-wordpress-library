@@ -104,3 +104,56 @@ function arc_image_grid_add_grid_short($atts, $content = null) {
 }
 
 add_shortcode('arc_add_image_grid', 'arc_image_grid_add_grid_short');
+
+// cards
+
+function get_cards($atts) {
+    $atts = set_attributes(array(
+        'data' => array(),
+        'card_class' => 'card',
+        'card_front_class' => 'front',
+        'card_back_class' => 'back',
+        'card_title_class' => 'title',
+        'read_more_class' => 'read-more',
+        'read_more_text' => 'Read more',
+        'card_container_class' => 'card-container',
+        'container_class' => 'container'
+        ),
+        $atts);
+
+    $cards = generate_card_content($atts);
+
+    return $cards;
+}
+
+function generate_card_content($atts) {
+    
+    $data = $atts['data'];
+    $card_class = $atts['card_class'];
+    $card_front_class = $atts['card_front_class'];
+    $card_back_class = $atts['card_back_class'];
+    $card_title_class = $atts['card_title_class'];
+    $read_more_class = $atts['read_more_class'];
+    $read_more_text = $atts['read_more_text'];
+    $card_container_class = $atts['card_container_class'];
+    $container_class = $atts['container_class'];
+
+    $container_class = $atts['container_class'];
+
+
+    $result = "<div class='".$container_class."'>";
+    foreach ($data as $post) {
+        $result .= "<div class='".$card_container_class."'>";        
+        $result .= "    <div class='".$card_class."'>";
+        $result .= "        <div class='".$card_front_class."' style='background-image: url(\"".$post->_arc_image_grid_img."\")'>";        
+        $result .= "        </div>";
+        $result .= "        <div class='".$card_back_class."' style='background-image: url(\"".$post->_arc_image_grid_img."\")'>";
+        $result .= "            <div class='".$card_title_class."'>".$post->post_title."</div>";
+        $result .= "            <div class='".$read_more_class."'><a href='".$post->guid."'>".$read_more_text."</a></div>";
+        $result .= "        </div>";
+        $result .= "    </div>";
+        $result .= "</div>";
+    }
+    $result .= "</div>";
+    return $result;
+}

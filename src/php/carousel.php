@@ -151,7 +151,7 @@ function generate_carousel($args) {
 
     }
 
-    $result .= '</div>';
+    $result .= '</div>';    
 
     return $result;
 }

@@ -56,6 +56,7 @@ function arc_convert_content($content, $data){
 }
 
 // Include components
+include 'helpers.php';
 include 'sections.php';
 include 'carousel.php';
 include 'image-grid.php';
