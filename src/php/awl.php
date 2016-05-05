@@ -62,6 +62,7 @@ include 'carousel.php';
 include 'image-grid.php';
 include 'event-calendar.php';
 include 'media-manager.php';
+include 'awl-options.php';
 
 // Custom meta boxes to post pages
 function arc_meta_box_add() {
@@ -108,53 +109,60 @@ function arc_meta_box_add_field($post, $id, $label, $type){
 }
 
 function get_meta_values() {
-    $meta_values = array(
-        array(
-            "meta" => "_arc_index",
-            "name" => "Index",
-            "type" => "text"
-        ),
-        array(
-            "meta" => "_arc_image_grid_img",
-            "name" => "Image",
-            "type" => "image"
-        ),
-        array(
-            "meta" => "_arc_image_grid_name",
-            "name" => "Grid name",
-            "type" => "text"
-        ),
-        array(
-            "meta" => "_arc_description",
-            "name" => "Description",
-            "type" => "textarea"
-        ),
-        array(
-            "meta" => "_arc_start_date",
-            "name" => "Start date",
-            "type" => "date"
-        ),
-        array(
-            "meta" => "_arc_end_date",
-            "name" => "End date",
-            "type" => "date"
-        ),
-        array(
-            "meta" => "_arc_venue",
-            "name" => "Venue",
-            "type" => "text"
-        ),
-        array(
-            "meta" => "_arc_author",
-            "name" => "Author",
-            "type" => "text"
-        ),
-        array(
-            "meta" => "_arc_video_link",
-            "name" => "Video link",
-            "type" => "text"
-        )
-    );
+
+
+    $test = get_option('awl_options', '[]');
+    $meta_values = json_decode($test['awl_meta_json'], true);
+
+    // print_r($meta_values[0]['meta']);
+
+    // $meta_values = array(
+    //     array(
+    //         "meta" => "_arc_index",
+    //         "name" => "Index",
+    //         "type" => "text"
+    //     ),
+    //     array(
+    //         "meta" => "_arc_image_grid_img",
+    //         "name" => "Image",
+    //         "type" => "image"
+    //     ),
+    //     array(
+    //         "meta" => "_arc_image_grid_name",
+    //         "name" => "Grid name",
+    //         "type" => "text"
+    //     ),
+    //     array(
+    //         "meta" => "_arc_description",
+    //         "name" => "Description",
+    //         "type" => "textarea"
+    //     ),
+    //     array(
+    //         "meta" => "_arc_start_date",
+    //         "name" => "Start date",
+    //         "type" => "date"
+    //     ),
+    //     array(
+    //         "meta" => "_arc_end_date",
+    //         "name" => "End date",
+    //         "type" => "date"
+    //     ),
+    //     array(
+    //         "meta" => "_arc_venue",
+    //         "name" => "Venue",
+    //         "type" => "text"
+    //     ),
+    //     array(
+    //         "meta" => "_arc_author",
+    //         "name" => "Author",
+    //         "type" => "text"
+    //     ),
+    //     array(
+    //         "meta" => "_arc_video_link",
+    //         "name" => "Video link",
+    //         "type" => "text"
+    //     )
+    // );
 
     return $meta_values;
 }
