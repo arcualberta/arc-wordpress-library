@@ -78,11 +78,8 @@ function arc_meta_box_add_field($post, $id, $label, $type){
     $value = get_post_meta($post->ID, $id, true);
     $field = $id . "_field";
     
-    echo '<p>';
-    echo '<strong>' . $label . '</strong>';
-    echo '</p>';
-    
-    echo '<p>';
+    echo '<div>';
+    echo '<p><strong>' . $label . '</strong></p>';
     echo '<label class="screen-reader-text" for="' . $field . '">';
     echo $label;
     echo '</label>';
@@ -91,7 +88,7 @@ function arc_meta_box_add_field($post, $id, $label, $type){
       case 'image':
           echo '<input type="hidden" id="' . $field . '" name="' . $id . '" value="' . esc_attr($value) . '" />';
           echo '<img id="' . $id . '" style="width: 200px"/>';
-          echo '<button id="' . $id . '_button">Change Image</button>';
+          echo '<div><button id="' . $id . '_button">Change Image</button><div>';
           //TODO: Add script for button
           break;
       
@@ -105,65 +102,14 @@ function arc_meta_box_add_field($post, $id, $label, $type){
           echo '<input type="text" id="' . $field . '" name="' . $id . '" value="' . esc_attr($value) . '" size="25" />';
     }
     
-    echo '</p>';
+    echo '</div>';
 }
 
 function get_meta_values() {
 
 
-    $test = get_option('awl_options', '[]');
-    $meta_values = json_decode($test['awl_meta_json'], true);
-
-    // print_r($meta_values[0]['meta']);
-
-    // $meta_values = array(
-    //     array(
-    //         "meta" => "_arc_index",
-    //         "name" => "Index",
-    //         "type" => "text"
-    //     ),
-    //     array(
-    //         "meta" => "_arc_image_grid_img",
-    //         "name" => "Image",
-    //         "type" => "image"
-    //     ),
-    //     array(
-    //         "meta" => "_arc_image_grid_name",
-    //         "name" => "Grid name",
-    //         "type" => "text"
-    //     ),
-    //     array(
-    //         "meta" => "_arc_description",
-    //         "name" => "Description",
-    //         "type" => "textarea"
-    //     ),
-    //     array(
-    //         "meta" => "_arc_start_date",
-    //         "name" => "Start date",
-    //         "type" => "date"
-    //     ),
-    //     array(
-    //         "meta" => "_arc_end_date",
-    //         "name" => "End date",
-    //         "type" => "date"
-    //     ),
-    //     array(
-    //         "meta" => "_arc_venue",
-    //         "name" => "Venue",
-    //         "type" => "text"
-    //     ),
-    //     array(
-    //         "meta" => "_arc_author",
-    //         "name" => "Author",
-    //         "type" => "text"
-    //     ),
-    //     array(
-    //         "meta" => "_arc_video_link",
-    //         "name" => "Video link",
-    //         "type" => "text"
-    //     )
-    // );
-
+    $options = get_option('awl_options', '[]');
+    $meta_values = json_decode($options['awl_meta_json'], true);
     return $meta_values;
 }
 
@@ -180,6 +126,7 @@ function arc_meta_box_callback($post) {
     
     ?>
     <script>
+
         function arcProperties_ImageClick(event) {
             var gallery_window = wp.media({
                 title: 'Select an image to display on image grids.',
@@ -214,6 +161,57 @@ function arc_meta_box_callback($post) {
         }
 
         arcProperties_Initialize();
+
+        function simplifyKey(text) {
+            return text.toLowerCase().trim().replace(/\s+/, " ");
+        }
+
+        // show or hide options based on selected categories
+
+        function showOptions(options) {
+
+            var categoriesChecked = {};
+
+            jQuery("#categorychecklist input").each(function(i, e){
+                var key = simplifyKey(jQuery(e).parent()[0].innerText);
+                categoriesChecked[key] = jQuery(e)[0].checked;
+            });
+
+            jQuery.each(options, function(i, option){
+                showOption = false;
+                if (option['categories'].length === 0) {
+                    showOption = true;
+                } else {
+                    jQuery.each(option['categories'], function(j, category){
+                        // console.log(category);
+                        var key = simplifyKey(category);
+                        if (categoriesChecked[key] === true) {
+                            showOption = true;
+                            return;
+                        }
+                    });    
+                }
+                
+                //  show meta as id
+                if (showOption) {
+                    jQuery("[name="+option.meta+"]").parent().show();
+                    console.log("show " + option.meta)
+                } else {
+                    jQuery("[name="+option.meta+"]").parent().hide();
+                    console.log("jide " + option.meta)
+                }
+            });
+        }
+
+        jQuery(function(){
+            var options = <?php print get_option('awl_options', '[]')['awl_meta_json']; ?> ;
+            jQuery("#categorychecklist input").change(function(){
+                showOptions(options)
+            });
+
+            showOptions(options);
+        });
+
     </script>
     <?php
 }
