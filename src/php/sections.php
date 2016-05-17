@@ -42,7 +42,7 @@ function arc_get_posts_by_category($category, $objectOutputFunction, $random = f
                 break;
             }
 
-            $currentObj = new \ARCPostCell;
+            $currentObj = new ARCPostCell();
             $currentObj->id = $result->ID;
             $currentObj->name = $result->post_title;
             $currentObj->post_type = $result->post_type;
