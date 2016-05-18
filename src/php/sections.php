@@ -265,7 +265,7 @@ function arc_limit_content($data, $contentPath, $contentLimit, $breakChar = ".",
     return $result;
 }
 
-function arc_create_section($id, $data, $imagePath, $titlePath = '', $contentPath = '', $urlPath = '', $classes = '', $isVertical = true){
+function arc_create_section($id, $data, $imagePath, $titlePath = '', $contentPath = '', $urlPath = '', $classes = '', $isVertical = true, $textLimit = 140){
     ?>
 <div id="<?php echo $id ?>" class="arc-sections <?php echo $classes ?>">
     <?php
@@ -275,7 +275,7 @@ function arc_create_section($id, $data, $imagePath, $titlePath = '', $contentPat
         <img src="<?php echo arc_convert_content($imagePath, $value)?>"/>
         <h4><?php echo arc_convert_content($titlePath, $value)?></h4>
         <div class='arc-section-content'>
-            <?php echo arc_limit_content($value, $contentPath, 140) ?>
+            <?php echo arc_limit_content($value, $contentPath, $textLimit) ?>
             <a class="arc-read-more" href="<?php echo arc_convert_content($urlPath, $value)?>">[Read More]</a>
         </div>
     </div>
@@ -286,10 +286,10 @@ function arc_create_section($id, $data, $imagePath, $titlePath = '', $contentPat
     <?php
 }
 
-function arc_section_by_category($id, $categoryName, $isVertical = true, $classes = '', $limit = 3) {
+function arc_section_by_category($id, $categoryName, $isVertical = true, $classes = '', $limit = 3, $textLimit = 140) {
     global $arc_carousel_array;
     $arc_carousel_array = array();
     
     arc_get_posts_by_category($categoryName, 'Awl\arc_carousel_array_push', false, $limit);
-    arc_create_section($id, $arc_carousel_array, '{$data->metadata["_arc_image_grid_img"]}', '$data->name', '{$data->get_post()->post_content}', '$data->url', $classes, $isVertical);
+    arc_create_section($id, $arc_carousel_array, '{$data->metadata["_arc_image_grid_img"]}', '$data->name', '{$data->get_post()->post_content}', '$data->url', $classes, $isVertical, $textLimit);
 }
