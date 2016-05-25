@@ -252,6 +252,7 @@ function get_posts_by_category($category = "", $limit = 100, $random = false, $o
 function arc_limit_content($data, $contentPath, $contentLimit, $breakChar = ".", $padding = "..."){
     $result = arc_convert_content($contentPath, $data);
     $result = strip_tags(trim($result));
+	$result = strip_shortcodes($result);
     
     // Split the results to match the content limit. We will stop it at the periods
     if(strlen($result) > $contentLimit && false !== ($breakpoint = strpos($result, $breakChar, $contentLimit))){ // Is the breakpoint here in the line
