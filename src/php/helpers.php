@@ -16,3 +16,10 @@ function set_attributes($default, $atts) {
 	return $atts;
 
 }
+
+function truncate_string($string, $n) {
+	if (strlen($string) < $n) {
+		return $string;
+	}
+	return implode(" ", array_slice(explode(" ", substr($string, 0, $n)), 0, -1)) . "...";
+}

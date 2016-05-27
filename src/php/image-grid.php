@@ -138,9 +138,6 @@ function generate_card_content($atts) {
     $card_container_class = $atts['card_container_class'];
     $container_class = $atts['container_class'];
 
-    $container_class = $atts['container_class'];
-
-
     $result = "<div class='".$container_class."'>";
     foreach ($data as $post) {
         $result .= "<div class='".$card_container_class."'>";        
@@ -149,7 +146,32 @@ function generate_card_content($atts) {
         $result .= "        </div>";
         $result .= "        <div class='".$card_back_class."' style='background-image: url(\"".$post->_arc_image_grid_img."\")'>";
         $result .= "            <div class='".$card_title_class."'>".$post->post_title."</div>";
-        $result .= "            <div class='".$read_more_class."'><a href='".$post->guid."'>".$read_more_text."</a></div>";
+        $result .= "            <div class='".$read_more_class."'><a href='".$post->guid."'>".$read_more_text."</a></div>";        
+        $result .= "            <div class='card_extra card_description_text'>".truncate_string($post->_arc_description, 300)."</div>";
+
+        if (strlen($post->_arc_author_residence) > 0) {
+            $result .= "            <div class='card_extra card_residence_title'>Residence</div>";
+            $result .= "            <div class='card_extra card_residence_text'>".$post->_arc_author_residence."</div>";    
+        }
+
+        if (strlen($post->_arc_author_hobbies) > 0) {
+            $result .= "            <div class='card_extra card_hobbies_title'>Hobies</div>";
+            $result .= "            <div class='card_extra card_hobbies_text'>".$post->_arc_author_hobbies."</div>";
+        }
+
+        if (strlen($post->_arc_author_specialization) > 0) {
+            $result .= "            <div class='card_extra card_specialization_title'>Specialization</div>";
+            $result .= "            <div class='card_extra card_specialization_text'>".$post->_arc_author_specialization."</div>";
+        }
+
+        if (strlen($post->_arc_author_email) > 0) {
+            $result .= "            <div class='card_extra card_email_title'>Email</div>";
+            $result .= "            <div class='card_extra card_email_text'>".$post->_arc_author_email."</div>";
+        }
+        
+        
+        
+
         $result .= "        </div>";
         $result .= "    </div>";
         $result .= "</div>";
