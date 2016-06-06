@@ -9,9 +9,9 @@ function arc_carousel_array_push($currentObj){
     array_push($arc_carousel_array, $currentObj);
 }
 
-function arc_create_carousel($id, $data, $content) { 
+function arc_create_carousel($id, $data, $content, $interval = 5000) { 
     ?>
-<div id="<?php echo $id ?>" class="carousel slide" data-ride="carousel">
+<div id="<?php echo $id ?>" class="carousel slide" data-ride="carousel" data-interval="<?php echo $interval ?>">
     <ol class="carousel-indicators">
         <?php foreach ($data as $key => $value) { ?>
         <li dtata-target="#<?php echo $id ?>" data-slide-to="<?php echo $key ?>" <?php if($key == 0) { echo 'class="active"'; } ?>></li>
@@ -36,7 +36,7 @@ function arc_create_carousel($id, $data, $content) {
     <?php
 }
 
-function arc_image_carousel($id, $data, $imagePath, $titlePath = '', $descriptionPath = ''){
+function arc_image_carousel($id, $data, $imagePath, $titlePath = '', $descriptionPath = '', $interval = 5000){
     $content = "<div class='arc-carousel-image' style='background-image: url($imagePath)'>";
     $content .= "<div class='carousel-caption'>";
     $content .= "<h1>$titlePath</h1>";
@@ -44,7 +44,7 @@ function arc_image_carousel($id, $data, $imagePath, $titlePath = '', $descriptio
     $content .= '</div>';
     $content .= '</div>';
     
-    arc_create_carousel($id, $data, $content);
+    arc_create_carousel($id, $data, $content, $interval);
 }
 
 function arc_image_carousel_by_grid_name($id, $gridName){
