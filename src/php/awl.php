@@ -3,6 +3,7 @@
   Plugin Name: AWL
   Description: A container for commonly used graphical components on websites
   Author: <a href="http://omarrodriguez.org/">Omar Rodriguez</a> & <a href="http://www.markmckellar.com/">Mark McKellar</a>
+  Version: 1.0
   Text Domain: arc-image-grid
  */
 namespace Awl;
